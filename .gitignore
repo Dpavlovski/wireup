@@ -1,3 +1,5 @@
 .venv1/Lib
 .env
 .idea
+frontend/.idea
+frontend/node_modules
