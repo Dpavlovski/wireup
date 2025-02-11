@@ -9,7 +9,7 @@ class User(MongoEntry):
     isAdmin: bool
 
 
-class Test(MongoEntry):
+class TestView(MongoEntry):
     title: str
     password: str
     description: str
@@ -32,7 +32,7 @@ class Option(MongoEntry):
     value: Any
 
 
-class Answer(MongoEntry):
+class Option(MongoEntry):
     submitted_test_id: str
     question_option_id: str
 
