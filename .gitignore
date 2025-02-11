@@ -1,4 +1,4 @@
-.venv1/Lib
+backend/.venv1
 .env
 .idea
 frontend/.idea
