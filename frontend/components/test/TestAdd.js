@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";  // To navigate after submission
+import { useRouter } from "next/navigation";
 
-export function CreateTest() {
-    const history = useHistory();
+export default function CreateTest() {
+    const router = useRouter();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [questions, setQuestions] = useState([{ question: "", options: ["", ""] }]);
@@ -21,17 +21,19 @@ export function CreateTest() {
         event.preventDefault();
         const newTest = { title, description, questions };
 
-        // Example API call to save the test
-        await fetch("/api/tests", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newTest),
-        });
+        try {
+            const response = await fetch("/api/tests", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newTest),
+            });
 
-        // Redirect to the list of tests after submission
-        history.push("/");
+            if (!response.ok) throw new Error("Failed to create test");
+
+            router.push("/");  // Redirect to homepage after submission
+        } catch (error) {
+            console.error("Error creating test:", error);
+        }
     };
 
     return (
@@ -39,9 +41,7 @@ export function CreateTest() {
             <h1>Create New Test</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="title" className="form-label">
-                        Test Title
-                    </label>
+                    <label htmlFor="title" className="form-label">Test Title</label>
                     <input
                         type="text"
                         className="form-control"
@@ -51,9 +51,7 @@ export function CreateTest() {
                     />
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="description" className="form-label">
-                        Description
-                    </label>
+                    <label htmlFor="description" className="form-label">Description</label>
                     <textarea
                         className="form-control"
                         id="description"

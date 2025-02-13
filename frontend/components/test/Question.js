@@ -9,7 +9,7 @@ export function Question({ questionId, question, options, onSelect, answer }) {
                     <Option
                         key={index}
                         questionId={questionId}
-                        option={option}
+                        option={option.value}
                         onSelect={onSelect}
                         answer={answer}
                     />

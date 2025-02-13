@@ -2,5 +2,5 @@ backend/.venv1/*
 .env
 .idea
 frontend/.idea
-frontend/node_modules/*
-frontend/.next/*
+frontend/node_modules
+frontend/.next

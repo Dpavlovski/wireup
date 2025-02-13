@@ -1,6 +1,6 @@
 from typing import Optional
 
-from src.database.mongo import MongoDBDatabase
+from backend.src.database.mongo import MongoDBDatabase
 
 mdb = None
 

@@ -17,7 +17,7 @@ export function TestView({title, description, questions}) {
             console.log(`Q: ${q.question}`);
             console.log(`A: ${answers[q.id] || "No answer selected"}`);
         });
-        alert("TestView submitted!");
+        alert("Test submitted!");
     };
 
     return (

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 from copy import deepcopy
@@ -25,7 +26,7 @@ class MongoDBDatabase:
         load_dotenv()
         url = os.getenv("MONGO_URL") if url is None else url
         print(url)
-        self.client = AsyncIOMotorClient(f"mongodb://root:example@{url}:27017/")
+        self.client = AsyncIOMotorClient(f"mongodb://root:example@{url}:27018/")
         self.db = self.client[database_name]
 
     async def ping(self) -> bool:
