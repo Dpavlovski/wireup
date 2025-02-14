@@ -1,23 +1,29 @@
 import {Question} from "./Question";
 import {useState} from "react";
+import {submitTest, TestSubmission} from "../../utils/api";
+import {useRouter} from "next/router";
 
-export function TestView({title, description, questions}) {
-    const [answers, setAnswers] = useState({});
+export function TestView({id, title, description, questions}) {
+    const router = useRouter();
+    const [answers, setAnswers] = useState([]);
 
-    const handleSelect = (questionId, answer) => {
-        setAnswers((prev) => ({
-            ...prev,
-            [questionId]: answer,
-        }));
+    const handleSelect = (question_id, option_id) => {
+        setAnswers((prev) => {
+            const updatedAnswers = prev.filter(a => a.question_id !== question_id);
+            return [...updatedAnswers, {question_id, option_id}];
+        });
     };
 
-    const handleSubmit = () => {
-        console.log("Selected Answers:");
-        questions.forEach((q) => {
-            console.log(`Q: ${q.question}`);
-            console.log(`A: ${answers[q.id] || "No answer selected"}`);
-        });
-        alert("Test submitted!");
+    const handleSubmit = async () => {
+        try {
+            const test = new TestSubmission(id, "john_doe", answers);
+            const response = await submitTest(test);
+            alert(response.message);
+            await router.push(`/test`);
+        } catch (error) {
+            console.error("Error submitting test:", error);
+            alert("Failed to submit test.");
+        }
     };
 
     return (
@@ -28,11 +34,10 @@ export function TestView({title, description, questions}) {
                 {questions.map((q) => (
                     <li key={q.id} className="list-group-item">
                         <Question
-                            questionId={q.id}
-                            question={q.question}
+                            question={q}
                             options={q.options}
                             onSelect={handleSelect}
-                            answer={answers[q.id]}
+                            answer={answers.find(a => a.question_id === q.id)?.option_id}
                         />
                     </li>
                 ))}

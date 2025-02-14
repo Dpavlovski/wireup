@@ -7,6 +7,21 @@ export const api = axios.create({
     },
 });
 
+export class TestSubmission {
+    constructor(testId, userId, answers) {
+        this.test_id = testId;
+        this.user_id = userId;
+        this.answers = answers;
+    }
+}
+
+export class Answer {
+    constructor(question_id, option_id) {
+        this.question_id = question_id;
+        this.option_id = option_id;
+    }
+}
+
 export const getAllTests = async () => {
     try {
         const response = await api.get("/test");
@@ -17,9 +32,9 @@ export const getAllTests = async () => {
     }
 }
 
-export const submitTest = async (testId, answers) => {
+export const submitTest = async (test) => {
     try {
-        const response = await api.post('/submit', {testId, answers});
+        const response = await api.post('/test/submit', test);
         return response.data;
     } catch (error) {
         console.error('Error submitting test:', error);

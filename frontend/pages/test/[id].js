@@ -39,7 +39,7 @@ export default function TakeTest() {
 
     return (
         <div>
-            <TestView title={test.title} description={test.description} questions={test.questions}/>
+            <TestView id={test.id} title={test.title} description={test.description} questions={test.questions}/>
         </div>
     );
 }
