@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, {useState} from "react";
+import {useRouter} from "next/navigation";
 
 export default function CreateTest() {
     const router = useRouter();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [questions, setQuestions] = useState([{ question: "", options: ["", ""] }]);
+    const [questions, setQuestions] = useState([{question: "", options: ["", ""]}]);
 
     const handleQuestionChange = (index, field, value) => {
         const updatedQuestions = [...questions];
@@ -14,17 +14,17 @@ export default function CreateTest() {
     };
 
     const handleAddQuestion = () => {
-        setQuestions([...questions, { question: "", options: ["", ""] }]);
+        setQuestions([...questions, {question: "", options: ["", ""]}]);
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const newTest = { title, description, questions };
+        const newTest = {title, description, questions};
 
         try {
             const response = await fetch("/api/tests", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(newTest),
             });
 

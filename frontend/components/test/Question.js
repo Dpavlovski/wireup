@@ -1,6 +1,6 @@
-import { Option } from "./Option";
+import {Option} from "./Option";
 
-export function Question({ question, options, onSelect, answer }) {
+export function Question({question, options, onSelect, answer}) {
     return (
         <div className="mb-4">
             <h3 className="text-secondary">{question.question}</h3>

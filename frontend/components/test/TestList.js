@@ -18,12 +18,14 @@ export function TestList({tests}) {
                         <Link href={`/test/${test.id}`}>
                             <button className="btn btn-info">Take Test</button>
                         </Link>
-
+                        <Link href={`/test/${test.id}/submitted`}>
+                            <button className="btn btn-info">Review Tests</button>
+                        </Link>
                     </div>
                 ))}
 
             </div>
-            <Link href={`/take/add`}>
+            <Link href={`/test/add`}>
                 <button className="btn btn-info">Create Test</button>
             </Link>
         </div>

@@ -1,7 +1,7 @@
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {getTest} from "../../utils/api";
-import {TestView} from "../../components/test/TestView";
+import {getTest} from "../../../utils/api";
+import {TestView} from "../../../components/test/TestView";
 
 export default function TakeTest() {
     const router = useRouter();

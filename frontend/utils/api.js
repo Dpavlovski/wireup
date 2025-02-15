@@ -15,12 +15,6 @@ export class TestSubmission {
     }
 }
 
-export class Answer {
-    constructor(question_id, option_id) {
-        this.question_id = question_id;
-        this.option_id = option_id;
-    }
-}
 
 export const getAllTests = async () => {
     try {
@@ -52,9 +46,20 @@ export const getTest = async (id) => {
     }
 }
 
-export const getQuestionsForTest = async (id) => {
+export const getSubmittedTests = async (id) => {
     try {
-        const response = await api.get('/questions' + id);
+        const response = await api.get("/test/" + id + "/submitted");
+        console.log("API Response:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching tests:", error);
+    }
+}
+
+
+export const getSubmittedTest = async (id) => {
+    try {
+        const response = await api.get('/test/submitted/' + id);
         return response.data;
     } catch (error) {
         console.error('Error fetching test:', error);
