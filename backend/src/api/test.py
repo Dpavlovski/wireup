@@ -53,6 +53,20 @@ class SubmittedTests(BaseModel):
     user: User
 
 
+class QuestionOptionDto(BaseModel):
+    question: str
+    options: List[str]
+
+
+class TestDto(BaseModel):
+    title: str
+    password: str
+    description: str
+    sector: str
+    questions: List[QuestionOptionDto]
+
+
+
 @router.get("/")
 async def get_tests(db: db_dep):
     try:
@@ -107,9 +121,57 @@ async def get_test(db: db_dep, id: str):
         raise HTTPException(status_code=400, detail=f"Invalid ObjectId format: {str(e)}")
 
 
+@router.get("/add")
+async def test_form(db: db_dep):
+    question = await db.get_entries(Question)
+    options = await db.get_entries(Option)
+
+    return question, options
+
+
 @router.post("/add")
-async def add_test(db: db_dep, test: Test):
-    return await db.add_entry(test)
+async def add_test(db: db_dep, dto: TestDto):
+    try:
+        test = Test(
+            title=dto.title,
+            description=dto.description,
+            password=dto.password,
+            sector=dto.sector,
+            date_created=datetime.now()
+        )
+        test_id = await db.add_entry(test)
+
+        questions = []
+        options = []
+        question_options = []
+
+        for q in dto.questions:
+            question = Question(question=q.question, test_id=test_id)
+            questions.append(question)
+
+        question_ids = await db.add_entries(questions)
+
+        for q, question_id in zip(dto.questions, question_ids):
+            for o in q.options:
+                option = Option(value=o)
+                options.append(option)
+
+        option_ids = await db.add_entries(options)
+
+        option_index = 0
+        for question_id, q in zip(question_ids, dto.questions):
+            for _ in q.options:
+                question_options.append(
+                    QuestionOption(question_id=question_id, option_id=option_ids[option_index])
+                )
+                option_index += 1
+
+        await db.add_entries(question_options)
+
+        return {"message": "Test added successfully", "test_id": test_id}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error adding test: {str(e)}")
 
 
 @router.post("/submit")

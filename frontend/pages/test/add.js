@@ -1,5 +1,6 @@
-import CreateTest from "../../components/test/TestAdd";
+import TestForm from "../../components/test/TestForm";
 
 export default function NewTest() {
-    return (<CreateTest/>);
+
+    return (<TestForm/>);
 }

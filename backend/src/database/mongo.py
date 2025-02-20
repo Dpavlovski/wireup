@@ -68,6 +68,29 @@ class MongoDBDatabase:
         await collection.insert_one(entry)
         return True
 
+    async def add_entries(
+            self,
+            entities: List[T],
+            collection_name: Optional[str] = None,
+            metadata: Optional[Dict[str, Any]] = None
+    ) -> List[str]:
+        if not entities:
+            return []
+
+        collection_name = entities[0].__class__.__name__ if collection_name is None else collection_name
+        collection = self.db[collection_name]
+
+        entries = []
+        for entity in entities:
+            entry = entity.model_dump()
+            entry.pop("id", None)
+            if metadata:
+                entry.update(metadata)
+            entries.append(entry)
+
+        result = await collection.insert_many(entries)
+        return [str(inserted_id) for inserted_id in result.inserted_ids]
+
     async def get_entries(
             self,
             class_type: TypingType[T],
