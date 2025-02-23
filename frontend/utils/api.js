@@ -16,9 +16,19 @@ export class TestSubmission {
 }
 
 
-export const getAllTests = async () => {
+export const getTests = async () => {
     try {
-        const response = await api.get("/test");
+        const response = await api.get("/test?is_template=False");
+        console.log("API Response:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching tests:", error);
+    }
+}
+
+export const getTemplates = async () => {
+    try {
+        const response = await api.get("/test?is_template=True");
         console.log("API Response:", response.data);
         return response.data;
     } catch (error) {
@@ -64,6 +74,16 @@ export const getSubmittedTest = async (id) => {
     }
 }
 
+export const addTemplate = async (template) => {
+    try {
+        const response = await api.post('/test/add_template', template);
+        return response.data;
+    } catch (error) {
+        console.error('Error adding template:', error);
+    }
+}
+
+
 export const addTest = async (test) => {
     try {
         const response = await api.post('/test/add', test);
@@ -72,3 +92,4 @@ export const addTest = async (test) => {
         console.error('Error adding test:', error);
     }
 }
+

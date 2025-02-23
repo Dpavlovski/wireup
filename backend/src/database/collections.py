@@ -11,11 +11,12 @@ class User(MongoEntry):
 
 class Test(MongoEntry):
     title: str
-    password: str
     description: str
-    sector: str
+    isTemplate: bool
+    sector: Optional[str] = None
+    password: Optional[str] = None
     date_created: datetime
-    date_modified: Optional[datetime] = None
+    template_id: Optional[str] = None
 
 
 class Question(MongoEntry):

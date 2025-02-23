@@ -1,12 +1,12 @@
 import {TestList} from "../../components/test/TestList";
 import {useEffect, useState} from "react";
-import {getAllTests} from "../../utils/api";
+import {getTests} from "../../utils/api";
 
 export default function Home() {
     const [tests, setTests] = useState([]);
 
     useEffect(() => {
-        getAllTests().then((tests) => setTests(tests));
+        getTests().then((tests) => setTests(tests));
     }, []);
 
     return (

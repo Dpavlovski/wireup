@@ -16,7 +16,7 @@ export function TestView({id, title, description, questions}) {
 
     const handleSubmit = async () => {
         try {
-            const test = new TestSubmission(id, "john_doe", answers);
+            const test = new TestSubmission(id, "67acb493d61dd907b1f30876", answers);
             const response = await submitTest(test);
             alert(response.message);
             await router.push(`/test`);
