@@ -6,7 +6,8 @@ from backend.src.database.mongo import MongoEntry
 
 class User(MongoEntry):
     username: str
-    isAdmin: bool
+    hashed_password: str
+    is_admin: bool
 
 
 class Test(MongoEntry):
