@@ -64,7 +64,7 @@ export const submitTest = async (test) => {
         const response = await api.post('/test/submit', test);
         return response.data;
     } catch (error) {
-        console.error('Error submitting test:', error);
+        console.error('Error submitting tests:', error);
     }
 };
 
@@ -73,7 +73,7 @@ export const getTest = async (id) => {
         const response = await api.get('/test/' + id);
         return response.data;
     } catch (error) {
-        console.error('Error fetching test:', error);
+        console.error('Error fetching tests:', error);
     }
 }
 
@@ -93,7 +93,7 @@ export const getSubmittedTest = async (id) => {
         const response = await api.get('/test/submitted/' + id);
         return response.data;
     } catch (error) {
-        console.error('Error fetching test:', error);
+        console.error('Error fetching tests:', error);
     }
 }
 
@@ -112,7 +112,7 @@ export const addTest = async (test) => {
         const response = await api.post('/test/add', test);
         return response.data;
     } catch (error) {
-        console.error('Error adding test:', error);
+        console.error('Error adding tests:', error);
     }
 }
 

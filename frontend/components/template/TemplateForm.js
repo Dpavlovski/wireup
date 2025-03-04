@@ -101,7 +101,7 @@ export default function TemplateForm() {
         }
         const newTemplate = {title, description, questions};
         await addTemplate(newTemplate);
-        router.push("/test/templates");
+        router.push("/admin/templates");
     };
 
     return (

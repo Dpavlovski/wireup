@@ -33,7 +33,7 @@ export default function TestForm() {
         }
         const newTest = {template_id: selectedTemplate, sector: sector, password: password};
         await addTest(newTest);
-        router.push("/test");
+        router.push("/admin/tests");
     };
 
     return (

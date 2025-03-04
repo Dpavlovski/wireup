@@ -1,13 +1,19 @@
 from datetime import datetime
+from enum import Enum
 from typing import Any, Optional
 
 from backend.src.database.mongo import MongoEntry
 
 
+class Role(str, Enum):
+    user = "user"
+    admin = "admin"
+
+
 class User(MongoEntry):
     username: str
     hashed_password: str
-    is_admin: bool
+    role: Role = Role.user
 
 
 class Test(MongoEntry):

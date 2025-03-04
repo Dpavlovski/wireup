@@ -1,8 +1,9 @@
 import {useEffect, useState} from "react";
 import {getTemplates} from "../../../utils/api";
-import TemplateList from "../../../components/test/TemplateList";
+import TemplateList from "../../../components/template/TemplateList";
+import ProtectedRoute from "../../../utils/ProtectedRoute";
 
-export default function Home() {
+export default function Templates() {
     const [templates, setTemplates] = useState([]);
 
     useEffect(() => {
@@ -10,8 +11,8 @@ export default function Home() {
     }, []);
 
     return (
-        <div>
+        <ProtectedRoute allowedRoles={["admin"]}>
             <TemplateList templates={templates}/>
-        </div>
+        </ProtectedRoute>
     );
 }

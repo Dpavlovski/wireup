@@ -17,7 +17,7 @@ export function SubmittedTestList({tests}) {
                         <div>
                             <h5>{submission.user.username}</h5>
                         </div>
-                        <Link href={`/test/${id}/submitted/${submission.test.id}`} passHref>
+                        <Link href={`/admin/tests/${id}/submitted/${submission.test.id}`} passHref>
                             <button className="btn btn-info">View Details</button>
                         </Link>
                     </div>

@@ -12,7 +12,9 @@ export default function AuthForm() {
 
     useEffect(() => {
         if (user) {
-            router.push("/test").then();
+            if (user.role === "admin") {
+                router.push("/admin/tests").then();
+            } else router.push("/").then();
         }
     }, [user, router]);
 
@@ -30,7 +32,9 @@ export default function AuthForm() {
             }
             const loggedInUser = await login(formData.username, formData.password);
             setUser(loggedInUser);
-            await router.push("/test");
+            if (loggedInUser.role === "admin") {
+                await router.push("/admin/tests");
+            } else await router.push("/");
         } catch (err) {
             setError(err.message || "Something went wrong");
         }

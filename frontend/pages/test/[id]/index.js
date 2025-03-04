@@ -2,6 +2,8 @@ import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import {getTest} from "../../../utils/api";
 import {TestView} from "../../../components/test/TestView";
+import ProtectedRoute from "../../../utils/ProtectedRoute";
+import {useAuth} from "../../../utils/AuthProvider";
 
 export default function TakeTest() {
     const router = useRouter();
@@ -9,6 +11,7 @@ export default function TakeTest() {
     const [test, setTest] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const {user} = useAuth()
 
     useEffect(() => {
         if (!id) return;
@@ -28,7 +31,7 @@ export default function TakeTest() {
                 setLoading(false);
             })
             .catch((err) => {
-                console.error("Error fetching test:", err);
+                console.error("Error fetching tests:", err);
                 setError("Test not found");
                 setLoading(false);
             });
@@ -38,8 +41,9 @@ export default function TakeTest() {
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div>
-            <TestView id={test.id} title={test.title} description={test.description} questions={test.questions}/>
-        </div>
+        <ProtectedRoute allowedRoles={["user"]}>
+            <TestView user={user} id={test.id} title={test.title} description={test.description}
+                      questions={test.questions}/>
+        </ProtectedRoute>
     );
 }

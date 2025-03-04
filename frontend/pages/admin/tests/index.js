@@ -1,7 +1,7 @@
-import {TestList} from "../../components/test/TestList";
 import {useEffect, useState} from "react";
-import {getTests} from "../../utils/api";
-import ProtectedRoute from "../../utils/ProtectedRoute";
+import {getTests} from "../../../utils/api";
+import ProtectedRoute from "../../../utils/ProtectedRoute";
+import TestList from "../../../components/test/TestList";
 
 export default function Home() {
     const [tests, setTests] = useState([]);
@@ -11,7 +11,7 @@ export default function Home() {
     }, []);
 
     return (
-        <ProtectedRoute allowedRoles={"admin"}>
+        <ProtectedRoute allowedRoles={["admin"]}>
             <div>
                 <TestList tests={tests}/>
             </div>

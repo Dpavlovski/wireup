@@ -9,7 +9,7 @@ from jwt.exceptions import PyJWTError
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
-from backend.src.database.collections import User
+from backend.src.database.collections import User, Role
 from backend.src.database.mongo import MongoDBDatabase
 from backend.src.database.singletons import get_mongo_db
 
@@ -45,7 +45,7 @@ async def register(db: db_dep, user_data: UserRegistration):
     new_user = User(
         username=user_data.username,
         hashed_password=hashed_pw,
-        is_admin=False
+        role=Role.user,
     )
     await db.add_entry(new_user)
     return {"message": "Registration successful"}
@@ -121,4 +121,4 @@ async def get_current_user(db: db_dep, request: Request) -> User:
 
 @router.get("/me")
 async def get_protected_data(current_user: User = Depends(get_current_user)):
-    return {"username": current_user.username, "is_admin": current_user.is_admin}
+    return {"username": current_user.username, "role": current_user.role}

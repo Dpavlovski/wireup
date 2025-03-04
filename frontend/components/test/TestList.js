@@ -1,33 +1,48 @@
 import Link from "next/link";
 
-
-export function TestList({tests}) {
-
+export default function TestList({tests}) {
     if (tests.length === 0) return <p>No tests available</p>;
 
     return (
         <div className="container mt-5">
-            <h1>All Tests</h1>
-            <div className="list-group">
-                {tests.map((test) => (
-                    <div key={test.id} className="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5>{test.title}</h5>
-                            <p>{test.description}</p>
-                        </div>
-                        <Link href={`/test/${test.id}`}>
-                            <button className="btn btn-info">Take Test</button>
-                        </Link>
-                        <Link href={`/test/${test.id}/submitted`}>
-                            <button className="btn btn-info">Review Tests</button>
-                        </Link>
-                    </div>
-                ))}
-
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h1>All Tests</h1>
+                <Link href="/admin/tests/add" legacyBehavior>
+                    <a className="btn btn-primary">Create Test</a>
+                </Link>
             </div>
-            <Link href={`/test/add`}>
-                <button className="btn btn-info">Create Test</button>
-            </Link>
+            <table className="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Sector</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Password</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {tests.map((test, index) => (
+                    <tr key={test.id}>
+                        <th scope="row">{index + 1}</th>
+                        <td>{test.sector}</td>
+                        <td>{test.title}</td>
+                        <td>{new Date(test.date_created).toLocaleDateString()}</td>
+                        <td>{test.password}</td>
+                        <td>
+                            {/*<Link href={`/admin/tests/${test.id}/edit`} legacyBehavior>*/}
+                            {/*    <a className="btn btn-sm btn-warning me-2">Edit</a>*/}
+                            {/*</Link>*/}
+                            <Link href={`/admin/tests/${test.id}/submitted`}>
+                                <button className="btn btn-sm btn-info me-2">Review</button>
+                            </Link>
+                            {/*<button className="btn btn-sm btn-danger">Delete</button>*/}
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
         </div>
     );
 }

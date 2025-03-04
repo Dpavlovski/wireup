@@ -40,7 +40,7 @@ export default function TemplatesList() {
         <div className="container mt-5">
             <h1 className="mb-4">Manage Test Templates</h1>
             <div className="mb-3">
-                <Link href="/test/templates/add">
+                <Link href="/admin/templates/add">
                     <button className="btn btn-primary">Create New Template</button>
                 </Link>
             </div>
@@ -60,7 +60,7 @@ export default function TemplatesList() {
                                         </small>
                                     </p>
                                     {/*<div className="d-flex justify-content-between">*/}
-                                    {/*    <Link href={`/test/templates/edit/${template.id}`}>*/}
+                                    {/*    <Link href={`/tests/templates/edit/${template.id}`}>*/}
                                     {/*        <a className="btn btn-secondary btn-sm">Edit</a>*/}
                                     {/*    </Link>*/}
                                     {/*    <button*/}

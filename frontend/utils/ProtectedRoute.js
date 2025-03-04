@@ -1,9 +1,9 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import {useEffect} from "react";
+import {useRouter} from "next/router";
 import {useAuth} from "./AuthProvider";
 
-export default function ProtectedRoute({ is_admin = [], children }) {
-    const { user } = useAuth();
+export default function ProtectedRoute({allowedRoles = [], children}) {
+    const {user} = useAuth();
     const router = useRouter();
 
     useEffect(() => {
@@ -12,8 +12,8 @@ export default function ProtectedRoute({ is_admin = [], children }) {
             return;
         }
 
-        if (allowedRoles.length > 0 && !allowedRoles.includes(user.is_admin)) {
-            router.push("/unauthorized").then( );
+        if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+            router.push("/unauthorized").then();
         }
     }, [user, allowedRoles, router]);
 

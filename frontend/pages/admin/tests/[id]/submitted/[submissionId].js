@@ -1,7 +1,8 @@
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {getSubmittedTest} from "../../../../utils/api";
-import SubmittedTestView from "../../../../components/test/SubmittedTestView";
+import {getSubmittedTest} from "../../../../../utils/api";
+import SubmittedTestView from "../../../../../components/test/SubmittedTestView";
+import ProtectedRoute from "../../../../../utils/ProtectedRoute";
 
 export default function SubmittedTest() {
     const router = useRouter();
@@ -35,8 +36,8 @@ export default function SubmittedTest() {
     if (!submission) return <p>No submission data found</p>;
 
     return (
-        <div>
+        <ProtectedRoute allowedRoles={['admin']}>
             <SubmittedTestView submission={submission}/>
-        </div>
+        </ProtectedRoute>
     );
 }
