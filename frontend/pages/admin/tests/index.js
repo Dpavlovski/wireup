@@ -3,7 +3,7 @@ import {getTests} from "../../../utils/api";
 import ProtectedRoute from "../../../utils/ProtectedRoute";
 import TestList from "../../../components/test/TestList";
 
-export default function Home() {
+export default function AdminHome() {
     const [tests, setTests] = useState([]);
 
     useEffect(() => {
@@ -12,9 +12,7 @@ export default function Home() {
 
     return (
         <ProtectedRoute allowedRoles={["admin"]}>
-            <div>
-                <TestList tests={tests}/>
-            </div>
+            <TestList tests={tests}/>
         </ProtectedRoute>
     );
 }

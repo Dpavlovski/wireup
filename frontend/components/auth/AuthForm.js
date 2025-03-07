@@ -27,14 +27,10 @@ export default function AuthForm() {
         setError(null);
         try {
             if (isRegister) {
-                const newUser = await register(formData.username, formData.password);
-                setUser(newUser);
+                await register(formData.username, formData.password);
             }
             const loggedInUser = await login(formData.username, formData.password);
             setUser(loggedInUser);
-            if (loggedInUser.role === "admin") {
-                await router.push("/admin/tests");
-            } else await router.push("/");
         } catch (err) {
             setError(err.message || "Something went wrong");
         }

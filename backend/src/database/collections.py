@@ -19,11 +19,13 @@ class User(MongoEntry):
 class Test(MongoEntry):
     title: str
     description: str
+    total_questions: int
     isTemplate: bool
     sector: Optional[str] = None
     password: Optional[str] = None
     date_created: datetime
     template_id: Optional[str] = None
+    is_active: Optional[bool] = None
 
 
 class Question(MongoEntry):

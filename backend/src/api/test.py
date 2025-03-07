@@ -78,6 +78,13 @@ async def get_tests(db: db_dep, is_template: bool):
         raise HTTPException(status_code=500, detail=f"Error fetching submitted tests: {str(e)}")
 
 
+@router.get("/active")
+async def get_active_tests(db: db_dep):
+    try:
+        return await db.get_entries(Test, {"is_active": True})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching submitted tests: {str(e)}")
+
 @router.get("/{id}/submitted")
 async def get_submitted_tests(db: db_dep, id: str):
     try:
@@ -101,6 +108,21 @@ async def get_submitted_tests(db: db_dep, id: str):
         raise HTTPException(status_code=500, detail=f"Error fetching submitted tests: {str(e)}")
 
 
+@router.get("/submitted/{id}")
+async def get_submitted_templates_by_user(db: db_dep, id: str):
+    try:
+        submit_tests = await db.get_entries(SubmittedTest, {"user_id": id})
+        if len(submit_tests) == 0:
+            return []
+
+        test_ids = [ObjectId(test.test_id) for test in submit_tests]
+        tests = await db.get_entries(Test, {"_id": {"$in": test_ids}})
+        templates = [t.template_id for t in tests]
+
+        return templates
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching submitted tests: {str(e)}")
 @router.get("/{id}")
 async def get_test(db: db_dep, id: str):
     try:
@@ -108,6 +130,35 @@ async def get_test(db: db_dep, id: str):
         test = await db.get_entry(obj_id, Test)
         if not test:
             raise HTTPException(status_code=404, detail="Test not found")
+        if not test.is_active:
+            raise HTTPException(status_code=500, detail="Test not active")
+
+        questions = await db.get_entries(Question, {"test_id": test.template_id})
+        questions_dict: Dict[str, List[Option]] = defaultdict(list)
+
+        for question in questions:
+            question_options = await db.get_entries(QuestionOption, {"question_id": question.id})
+            option_ids = [ObjectId(option.option_id) for option in question_options]
+            options = await db.get_entries(Option, {"_id": {"$in": option_ids}})
+            questions_dict[question.id] = options
+
+        return TestResponse(
+            test=test,
+            questions=[QuestionDto(question=question, options=questions_dict[question.id]) for question in questions]
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid ObjectId format: {str(e)}")
+
+
+@router.get("/{id}")
+async def get_total_questions_of_test(db: db_dep, id: str):
+    try:
+        obj_id = ObjectId(id)
+        test = await db.get_entry(obj_id, Test)
+        if not test:
+            raise HTTPException(status_code=404, detail="Test not found")
+        if not test.is_active:
+            raise HTTPException(status_code=500, detail="Test not active")
 
         questions = await db.get_entries(Question, {"test_id": test.template_id})
         questions_dict: Dict[str, List[Option]] = defaultdict(list)
@@ -142,11 +193,13 @@ async def add_test(db: db_dep, dto: TestDto):
         test = Test(
             title=template.title,
             description=template.description,
+            total_questions=template.total_questions,
             isTemplate=False,
             template_id=dto.template_id,
             password=dto.password,
             sector=dto.sector,
-            date_created=datetime.now()
+            date_created=datetime.now(),
+            is_active=False
         )
         test_id = await db.add_entry(test)
         return {"message": "Test added successfully", "test_id": test_id}
@@ -161,7 +214,8 @@ async def add_template(db: db_dep, dto: TemplateDto):
             title=dto.title,
             description=dto.description,
             isTemplate=True,
-            date_created=datetime.now()
+            date_created=datetime.now(),
+            total_questions=len(dto.questions)
         )
         test_id = await db.add_entry(test)
 
@@ -274,3 +328,15 @@ async def get_submitted_test(db: db_dep, id: str):
         return SubmittedTestReview(test=test, user=user, question_answer=question_answer)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid ObjectId format: {str(e)}")
+
+
+@router.post("/activate/{id}")
+async def activate_test(db: db_dep, id: str):
+    try:
+        obj_id = ObjectId(id)
+        test = await db.get_entry(obj_id, Test)
+        active_status = test.is_active
+        await db.update_entry(test, update={"is_active": not active_status})
+        return {"message": "Test " + "activated" if active_status else "deactivated" + "successfully"}
+    except:
+        raise HTTPException(status_code=404, detail="Object not found")

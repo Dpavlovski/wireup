@@ -80,8 +80,13 @@ async def login(db: db_dep, user_data: UserLogin, response: Response):
         samesite="lax",
         max_age=60 * 60 * 24,
     )
+    user = await db.get_entry_from_col_values(
+        columns={"username": user_data.username},
+        class_type=User
+    )
 
-    return {"access_token": jwt_token, "token_type": "bearer"}
+    return {"access_token": jwt_token, "token_type": "bearer", "id": user.id, "username": user.username,
+            "role": user.role}
 
 
 @router.post("/logout")
@@ -121,4 +126,4 @@ async def get_current_user(db: db_dep, request: Request) -> User:
 
 @router.get("/me")
 async def get_protected_data(current_user: User = Depends(get_current_user)):
-    return {"username": current_user.username, "role": current_user.role}
+    return {"id": current_user.id, "username": current_user.username, "role": current_user.role}
