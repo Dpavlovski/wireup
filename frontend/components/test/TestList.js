@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { activateTest } from "../../utils/api";
+import {useEffect, useState} from "react";
+import {activateTest} from "../../utils/api";
 
-export default function TestList({ tests: initialTests }) {
+export default function TestList({tests: initialTests}) {
     const [localTests, setLocalTests] = useState(initialTests);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedSector, setSelectedSector] = useState("all");
@@ -34,7 +34,7 @@ export default function TestList({ tests: initialTests }) {
 
             setLocalTests(prevTests =>
                 prevTests.map(test =>
-                    test.id === id ? { ...test, is_active: !test.is_active } : test
+                    test.id === id ? {...test, is_active: !test.is_active} : test
                 )
             );
         } catch (error) {

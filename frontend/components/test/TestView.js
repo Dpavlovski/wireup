@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { Question } from "./Question";
-import { submitTest, TestSubmission } from "../../utils/api";
-import { useRouter } from "next/router";
+import {useState} from "react";
+import {Question} from "./Question";
+import {submitTest, TestSubmission} from "../../utils/api";
+import {useRouter} from "next/router";
 
-export function TestView({ user, id, title, description, questions }) {
+export function TestView({user, id, title, description, questions}) {
     const router = useRouter();
 
     const [answers, setAnswers] = useState([]);
@@ -13,7 +13,7 @@ export function TestView({ user, id, title, description, questions }) {
     const handleSelect = (question_id, option_id) => {
         setAnswers((prev) => {
             const updatedAnswers = prev.filter((a) => a.question_id !== question_id);
-            return [...updatedAnswers, { question_id, option_id }];
+            return [...updatedAnswers, {question_id, option_id}];
         });
         setWarning("");
     };
@@ -68,17 +68,17 @@ export function TestView({ user, id, title, description, questions }) {
     return (
         <div
             className="container mt-5 p-4 border rounded shadow-lg bg-light"
-            style={{ maxWidth: "800px" }}
+            style={{maxWidth: "800px"}}
         >
             <h1 className="text-primary text-center">{title}</h1>
             <h5 className="text-muted text-center mb-4">{description}</h5>
 
             <div className="mb-4">
-                <div className="progress" style={{ height: "24px" }}>
+                <div className="progress" style={{height: "24px"}}>
                     <div
                         className="progress-bar progress-bar-striped bg-info"
                         role="progressbar"
-                        style={{ width: `${progressPercent}%` }}
+                        style={{width: `${progressPercent}%`}}
                         aria-valuenow={progressPercent}
                         aria-valuemin="0"
                         aria-valuemax="100"

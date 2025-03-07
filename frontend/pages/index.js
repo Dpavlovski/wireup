@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import {ChartBarIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline";
 import {LockClosedIcon, XCircleIcon} from "@heroicons/react/16/solid";
-import {getActiveTests, getSubmittedTemplatesByUser, getSubmittedTestsByUser} from "../utils/api";
+import {getActiveTests, getSubmittedTemplatesByUser} from "../utils/api";
 import {useRouter} from "next/router";
 
 export default function HomePage() {
