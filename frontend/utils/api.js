@@ -46,6 +46,7 @@ export const getTests = async () => {
         return response.data;
     } catch (error) {
         console.error("Error fetching tests:", error);
+        throw error;
     }
 }
 
@@ -56,6 +57,7 @@ export const getActiveTests = async () => {
         return response.data;
     } catch (error) {
         console.error("Error fetching tests:", error);
+        throw error;
     }
 }
 
@@ -66,6 +68,7 @@ export const getTemplates = async () => {
         return response.data;
     } catch (error) {
         console.error("Error fetching tests:", error);
+        throw error;
     }
 }
 
@@ -75,6 +78,7 @@ export const submitTest = async (test) => {
         return response.data;
     } catch (error) {
         console.error('Error submitting tests:', error);
+        throw error;
     }
 };
 
@@ -84,6 +88,7 @@ export const getTest = async (id) => {
         return response.data;
     } catch (error) {
         console.error('Error fetching tests:', error);
+        throw error;
     }
 }
 
@@ -94,6 +99,7 @@ export const getSubmittedTests = async (id) => {
         return response.data;
     } catch (error) {
         console.error("Error fetching tests:", error);
+        throw error;
     }
 }
 
@@ -104,6 +110,7 @@ export const getSubmittedTest = async (id) => {
         return response.data;
     } catch (error) {
         console.error('Error fetching tests:', error);
+        throw error;
     }
 }
 
@@ -113,24 +120,53 @@ export const getSubmittedTemplatesByUser = async (id) => {
         return response.data;
     } catch (error) {
         console.error('Error fetching tests:', error);
+        throw error;
     }
 }
 export const addTemplate = async (template) => {
     try {
-        const response = await api.post('/test/add_template', template);
+        const response = await api.post('/template/add', template);
         return response.data;
     } catch (error) {
         console.error('Error adding template:', error);
+        throw error;
     }
 }
 
+export const copyTemplate = async (id) => {
+    try {
+        const response = await api.post('/template/copy/' + id);
+        return response.data;
+    } catch (error) {
+        console.error('Error copying template:', error);
+        throw error;
+    }
+}
 
+export const deleteTemplate = async (id) => {
+    try {
+        const response = await api.post('/template/delete/' + id);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const editTemplate = async (id, template) => {
+    try {
+        await addTemplate(template)
+        await deleteTemplate(id)
+    } catch (error) {
+        throw error;
+    }
+}
 export const addTest = async (test) => {
     try {
         const response = await api.post('/test/add', test);
         return response.data;
     } catch (error) {
         console.error('Error adding tests:', error);
+        throw error;
     }
 }
 
@@ -141,5 +177,17 @@ export const activateTest = async (id) => {
         return response.data;
     } catch (error) {
         console.error('Error adding tests:', error);
+        throw error;
+    }
+}
+
+
+export const checkExistingTests = async (id) => {
+    try {
+        const response = await api.get(`/template/check_existing_tests/` + id);
+        return response.data;
+    } catch (error) {
+        console.error('Error checking existing tests:', error);
+        throw error;
     }
 }

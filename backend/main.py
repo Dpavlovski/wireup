@@ -4,8 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.src.api import auth
-from src.api import test
+from backend.src.api import template, test, auth
 from src.database.singletons import get_mongo_db
 
 
@@ -16,10 +15,11 @@ async def lifespan(app: FastAPI):
     mdb = await get_mongo_db()
     mdb.client.close()
 
-
+prefix = "/api"
 app = FastAPI(lifespan=lifespan)
-app.include_router(test.router, prefix="/api/test")
-app.include_router(auth.router, prefix="/api/auth")
+app.include_router(test.router, prefix=prefix + "/test", tags=["test"])
+app.include_router(template.router, prefix=prefix + "/template", tags=["template"])
+app.include_router(auth.router, prefix=prefix + "/auth", tags=["auth"])
 
 
 app.add_middleware(

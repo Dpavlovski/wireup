@@ -1,84 +1,135 @@
-import React, {useEffect, useState} from "react";
 import Link from "next/link";
-import {getTemplates} from "../../utils/api";
+import {useState} from "react";
+import {Button, Modal} from "react-bootstrap";
+import toast, {Toaster} from "react-hot-toast";
 
-export default function TemplatesList() {
-    const [templates, setTemplates] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function TemplatesList({templates, handleCopy, handleDelete}) {
+    const [selectedTemplate, setSelectedTemplate] = useState(null);
 
-    useEffect(() => {
-        fetchTemplates().then();
-    }, []);
+    const openDeleteModal = (template) => {
+        setSelectedTemplate(template);
+    };
 
-    const fetchTemplates = async () => {
+    const closeDeleteModal = () => {
+        setSelectedTemplate(null);
+    };
+
+    const confirmDelete = async () => {
+        if (!selectedTemplate) return;
         try {
-            const data = await getTemplates();
-            setTemplates(data);
+            await handleDelete(selectedTemplate.id);
+            toast.success("Template deleted successfully");
         } catch (error) {
-            console.error("Error fetching templates:", error);
-        } finally {
-            setLoading(false);
+            if (error.response && error.response.status === 409) {
+                toast.error(error.response.data?.detail || "Cannot delete template due to existing references.");
+            } else {
+                toast.error(error.response?.data?.detail || "An error occurred while deleting the template.");
+            }
+        }
+        finally {
+            closeDeleteModal();
         }
     };
 
-    // const handleDelete = async (templateId) => {
-    //     if (confirm("Are you sure you want to delete this template?")) {
-    //         try {
-    //             await deleteTemplate(templateId);
-    //             fetchTemplates().then();
-    //         } catch (error) {
-    //             console.error("Error deleting template:", error);
-    //         }
-    //     }
-    // };
-
-    if (loading) {
-        return <div>Loading templates...</div>;
-    }
-
     return (
-        <div className="container mt-5">
-            <h1 className="mb-4">Manage Test Templates</h1>
-            <div className="mb-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <Toaster position="bottom-right"/>
+
+            <Modal show={!!selectedTemplate} onHide={closeDeleteModal} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm Delete</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <p className="text-gray-600">
+                        Are you sure you want to delete the template
+                        {selectedTemplate ? ` "${selectedTemplate.title}"` : ""}? This action cannot be undone.
+                    </p>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={closeDeleteModal}>
+                        Cancel
+                    </Button>
+                    <Button variant="danger" onClick={confirmDelete}>
+                        Delete
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <div className="flex justify-between items-center mb-8">
+                <h1 className="text-3xl font-bold text-gray-900">Manage Test Templates</h1>
                 <Link href="/admin/templates/add">
-                    <button className="btn btn-primary">Create New Template</button>
+                    <button
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition-colors duration-200 font-medium">
+                        Create New Template
+                    </button>
                 </Link>
             </div>
+
             {templates.length === 0 ? (
-                <p>No templates found.</p>
+                <div className="text-center py-12">
+                    <p className="text-gray-500 text-lg">No templates found.</p>
+                </div>
             ) : (
-                <div className="row">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {templates.map((template) => (
-                        <div key={template.id} className="col-md-4 mb-3">
-                            <div className="card h-100">
-                                <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title">{template.title}</h5>
-                                    <p className="card-text flex-grow-1">{template.description}</p>
-                                    <p className="card-text">
-                                        <small className="text-muted">
-                                            Created: {new Date(template.date_created).toLocaleDateString()}
-                                        </small>
-                                    </p>
-                                    {/*<div className="d-flex justify-content-between">*/}
-                                    {/*    <Link href={`/tests/templates/edit/${template.id}`}>*/}
-                                    {/*        <a className="btn btn-secondary btn-sm">Edit</a>*/}
-                                    {/*    </Link>*/}
-                                    {/*    <button*/}
-                                    {/*        className="btn btn-danger btn-sm"*/}
-                                    {/*        onClick={() => handleDelete(template.id)}*/}
-                                    {/*    >*/}
-                                    {/*        Delete*/}
-                                    {/*    </button>*/}
-                                    {/*</div>*/}
+                        <div
+                            key={template.id}
+                            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+                        >
+                            <div className="p-6 h-full flex flex-col">
+                                <div className="flex-1">
+                                    <h3 className="text-xl font-semibold text-gray-800 mb-2">{template.title}</h3>
+                                    <p className="text-gray-600 mb-4 line-clamp-3">{template.description}</p>
+                                    <div className="text-sm text-gray-500 mb-4">
+                                        Created: {new Date(template.date_created).toLocaleDateString()}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between gap-2">
+                                    <Link
+                                        href={`/admin/templates/preview/${template.id}`}
+                                        className="flex-1 text-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md transition-colors duration-200"
+                                    >
+                                        Preview
+                                    </Link>
+
+                                    <div className="flex gap-2">
+                                        <button
+                                            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600"
+                                            onClick={() => handleCopy(template.id)}
+                                        >
+                                            Copy
+                                        </button>
+                                        <button
+                                            className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700"
+                                            onClick={() => openDeleteModal(template)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
-            <div className="mt-4">
-                <Link href="/test">
-                    <button className="btn btn-secondary">Back to Tests</button>
+
+            <div className="mt-8">
+                <Link
+                    href="/admin/tests"
+                    className="inline-flex items-center text-gray-600 hover:text-gray-800 transition-colors duration-200"
+                >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                        />
+                    </svg>
+                    Back to Tests
                 </Link>
             </div>
         </div>

@@ -20,8 +20,7 @@ export default function Header() {
         <header className="bg-white shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
-                    <Link href="/" className="flex-shrink-0">
+                    <Link href={user && user.role === "admin" ? "/admin/tests" : "/"} className="flex-shrink-0">
                         <Image
                             src={logo}
                             alt="Logo"
@@ -31,7 +30,6 @@ export default function Header() {
                         />
                     </Link>
 
-                    {/* Navigation */}
                     <div className="flex items-center gap-6">
                         {user && user.role === "admin" && (
                             <nav className="hidden md:flex items-center gap-4">
@@ -58,7 +56,6 @@ export default function Header() {
                             </nav>
                         )}
 
-                        {/* User Info & Logout */}
                         {user && (
                             <div className="flex items-center gap-4 ml-4 border-l border-gray-200 pl-4">
                                 <div className="flex items-center text-sm text-gray-600">

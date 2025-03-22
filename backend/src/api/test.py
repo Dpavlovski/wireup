@@ -123,6 +123,8 @@ async def get_submitted_templates_by_user(db: db_dep, id: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching submitted tests: {str(e)}")
+
+
 @router.get("/{id}")
 async def get_test(db: db_dep, id: str):
     try:
@@ -130,10 +132,11 @@ async def get_test(db: db_dep, id: str):
         test = await db.get_entry(obj_id, Test)
         if not test:
             raise HTTPException(status_code=404, detail="Test not found")
-        if not test.is_active:
+        if not test.is_active and not test.isTemplate:
             raise HTTPException(status_code=500, detail="Test not active")
 
-        questions = await db.get_entries(Question, {"test_id": test.template_id})
+        test_id = test.id if test.isTemplate else test.template_id
+        questions = await db.get_entries(Question, {"test_id": test_id})
         questions_dict: Dict[str, List[Option]] = defaultdict(list)
 
         for question in questions:
@@ -205,51 +208,6 @@ async def add_test(db: db_dep, dto: TestDto):
         return {"message": "Test added successfully", "test_id": test_id}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error adding test: {str(e)}")
-
-
-@router.post("/add_template")
-async def add_template(db: db_dep, dto: TemplateDto):
-    try:
-        test = Test(
-            title=dto.title,
-            description=dto.description,
-            isTemplate=True,
-            date_created=datetime.now(),
-            total_questions=len(dto.questions)
-        )
-        test_id = await db.add_entry(test)
-
-        questions = []
-        options = []
-        question_options = []
-
-        for q in dto.questions:
-            question = Question(question=q.question, test_id=test_id)
-            questions.append(question)
-
-        question_ids = await db.add_entries(questions)
-
-        for q, question_id in zip(dto.questions, question_ids):
-            for o in q.options:
-                option = Option(value=o)
-                options.append(option)
-
-        option_ids = await db.add_entries(options)
-
-        option_index = 0
-        for question_id, q in zip(question_ids, dto.questions):
-            for _ in q.options:
-                question_options.append(
-                    QuestionOption(question_id=question_id, option_id=option_ids[option_index])
-                )
-                option_index += 1
-
-        await db.add_entries(question_options)
-
-        return {"message": "Template added successfully", "test_id": test_id}
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error adding template: {str(e)}")
 
 
 @router.post("/submit")
