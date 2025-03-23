@@ -4,6 +4,7 @@ from typing import Annotated, List, Dict
 
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.openapi.models import Response
 from pydantic import BaseModel
 
 from backend.src.database.collections import (
@@ -75,7 +76,7 @@ async def get_tests(db: db_dep, is_template: bool):
     try:
         return await db.get_entries(Test, {"isTemplate": is_template})
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching submitted tests: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error fetching tests: {str(e)}")
 
 
 @router.get("/active")
@@ -83,7 +84,7 @@ async def get_active_tests(db: db_dep):
     try:
         return await db.get_entries(Test, {"is_active": True})
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching submitted tests: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error fetching active tests: {str(e)}")
 
 @router.get("/{id}/submitted")
 async def get_submitted_tests(db: db_dep, id: str):
@@ -150,7 +151,7 @@ async def get_test(db: db_dep, id: str):
             questions=[QuestionDto(question=question, options=questions_dict[question.id]) for question in questions]
         )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Invalid ObjectId format: {str(e)}")
+        raise HTTPException(status_code=400, detail=e)
 
 
 @router.get("/{id}")
@@ -177,7 +178,7 @@ async def get_total_questions_of_test(db: db_dep, id: str):
             questions=[QuestionDto(question=question, options=questions_dict[question.id]) for question in questions]
         )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Invalid ObjectId format: {str(e)}")
+        raise HTTPException(status_code=400, detail=e)
 
 
 @router.get("/add")
@@ -285,7 +286,7 @@ async def get_submitted_test(db: db_dep, id: str):
 
         return SubmittedTestReview(test=test, user=user, question_answer=question_answer)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Invalid ObjectId format: {str(e)}")
+        raise HTTPException(status_code=400, detail=e)
 
 
 @router.post("/activate/{id}")
@@ -298,3 +299,50 @@ async def activate_test(db: db_dep, id: str):
         return {"message": "Test " + "activated" if active_status else "deactivated" + "successfully"}
     except:
         raise HTTPException(status_code=404, detail="Object not found")
+
+
+@router.get("/{test_id}/has_submissions")
+async def has_submissions(db: db_dep, test_id: str):
+    count = await db.count_entries(SubmittedTest, {"test_id": test_id})
+    return count > 0
+
+
+@router.get("/edit/{test_id}")
+async def get_edit_test(db: db_dep, test_id: str):
+    try:
+        if await db.count_entries(SubmittedTest, {"test_id": test_id}):
+            raise HTTPException(400, "Cannot edit test with existing submissions")
+
+        test = await db.get_entry(ObjectId(test_id), Test)
+        if not test:
+            raise HTTPException(404, "Test not found")
+
+        return test
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error editing test: {str(e)}")
+
+
+@router.post("/edit/{test_id}")
+async def edit_test(db: db_dep, test_id: str, dto: TestDto):
+    try:
+        if await db.count_entries(SubmittedTest, {"test_id": test_id}):
+            raise HTTPException(400, "Cannot edit test with existing submissions")
+
+        test = await db.get_entry(ObjectId(test_id), Test)
+        test.template_id = dto.template_id
+        test.sector = dto.sector
+        test.password = dto.password
+        await db.update_entry(test)
+        return Response(description="Test edited")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error editing test: {str(e)}")
+
+
+@router.post("/delete/{test_id}")
+async def delete_test(db: db_dep, test_id: str):
+    if await db.count_entries(SubmittedTest, {"test_id": test_id}):
+        raise HTTPException(400, "Cannot delete test with existing submissions")
+
+    test = await db.get_entry(ObjectId(test_id), Test)
+    await db.delete_entity(test)
+    return Response(description="Test deleted")

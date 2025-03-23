@@ -1,48 +1,72 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-import {addTest, getTemplates} from "../../utils/api";
+import {addTest, editTest, getTemplates} from "../../utils/api";
 
-export default function TestForm() {
+export default function TestForm({initialData}) {
     const router = useRouter();
     const [templates, setTemplates] = useState([]);
     const [selectedTemplate, setSelectedTemplate] = useState("");
     const [sector, setSector] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const isEditMode = !!initialData;
 
     useEffect(() => {
-        const fetchTemplates = async () => {
+        const fetchData = async () => {
             try {
-                const data = await getTemplates();
-                setTemplates(data);
+                const [templatesData] = await Promise.all([
+                    getTemplates(),
+                ]);
+
+                setTemplates(templatesData);
+
+                if (initialData) {
+                    setSelectedTemplate(initialData.template_id);
+                    setSector(initialData.sector);
+                    setPassword(initialData.password);
+                }
             } catch (error) {
-                console.error("Error fetching templates:", error);
+                console.error("Error fetching data:", error);
             }
         };
-        fetchTemplates().then();
-    }, []);
+
+        fetchData();
+    }, [initialData?.id, isEditMode]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!selectedTemplate) {
-            alert("Please select a template.");
-            return;
+        setLoading(true);
+
+        try {
+            const testData = {
+                template_id: selectedTemplate,
+                sector: sector.trim(),
+                password: password.trim()
+            };
+
+            if (isEditMode) {
+                await editTest(initialData.id, testData);
+            } else {
+                await addTest(testData);
+            }
+
+            router.push("/admin/tests");
+        } catch (error) {
+            console.error("Form submission failed:", error);
+            alert(error.response?.data?.detail || "An error occurred");
+        } finally {
+            setLoading(false);
         }
-        if (!sector.trim() || !password.trim()) {
-            alert("Sector and Password are required.");
-            return;
-        }
-        const newTest = {template_id: selectedTemplate, sector: sector, password: password};
-        await addTest(newTest);
-        router.push("/admin/tests");
     };
 
     return (
         <div className="container mt-5">
-            <h1 className="mb-4">Create Test from Template</h1>
+            <h1 className="mb-4">{isEditMode ? "Edit Test" : "Create Test from Template"}</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="template" className="form-label">
-                        Select Template *
+                        Template {!isEditMode && "*"}
                     </label>
                     <select
                         id="template"
@@ -51,7 +75,9 @@ export default function TestForm() {
                         onChange={(e) => setSelectedTemplate(e.target.value)}
                         required
                     >
-                        <option value="">-- Choose a Template --</option>
+                        {!isEditMode && (
+                            <option value="">-- Choose a Template --</option>
+                        )}
                         {templates.map((template) => (
                             <option key={template.id} value={template.id}>
                                 {template.title}
@@ -87,8 +113,12 @@ export default function TestForm() {
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">
-                    Create Test
+                <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={loading}
+                >
+                    {loading ? "Saving..." : (isEditMode ? "Save Changes" : "Create Test")}
                 </button>
             </form>
         </div>

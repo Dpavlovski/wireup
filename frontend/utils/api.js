@@ -191,3 +191,33 @@ export const checkExistingTests = async (id) => {
         throw error;
     }
 }
+
+export const checkTestSubmissions = async (testId) => {
+    try {
+        const response = await api.get(`/test/${testId}/has_submissions`);
+        return response.data;
+    } catch (error) {
+        console.error('Error checking submissions:', error);
+        return true;
+    }
+};
+
+
+export const getEditTest = async (id) => {
+    try {
+        const response = await api.get('/test/edit/' + id);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching test:', error);
+        throw error;
+    }
+}
+
+
+export const editTest = async (testId, test) => {
+    return api.post(`/test/edit/${testId}`, test);
+};
+
+export const deleteTest = async (testId) => {
+    return api.post(`/test/delete/${testId}`);
+};

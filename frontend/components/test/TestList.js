@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
-import {activateTest} from "../../utils/api";
+import {activateTest, checkTestSubmissions, deleteTest} from "../../utils/api";
 
 export default function TestList({tests: initialTests}) {
     const [localTests, setLocalTests] = useState(initialTests);
@@ -9,9 +9,21 @@ export default function TestList({tests: initialTests}) {
     const [searchQuery, setSearchQuery] = useState("");
     const [testsPerPage] = useState(10);
     const [loadingId, setLoadingId] = useState(null);
+    const [deletingId, setDeletingId] = useState(null);
+    const [submissionChecks, setSubmissionChecks] = useState({});
 
     useEffect(() => {
-        setLocalTests(initialTests);
+        const checkSubmissions = async () => {
+            const checks = {};
+            for (const test of initialTests) {
+                const hasSubmissions = await checkTestSubmissions(test.id);
+                checks[test.id] = hasSubmissions;
+                console.log(hasSubmissions)
+            }
+            setSubmissionChecks(checks);
+            setLocalTests(initialTests);
+        };
+        checkSubmissions();
     }, [initialTests]);
 
     const sectors = [...new Set(localTests.map((test) => test.sector))];
@@ -41,6 +53,21 @@ export default function TestList({tests: initialTests}) {
             console.error("Activation failed:", error);
         } finally {
             setLoadingId(null);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this test? This action cannot be undone.")) return;
+
+        try {
+            setDeletingId(id);
+            await deleteTest(id);
+            setLocalTests(prev => prev.filter(test => test.id !== id));
+        } catch (error) {
+            console.error("Delete failed:", error);
+            alert(error.response?.data?.detail || "Could not delete test");
+        } finally {
+            setDeletingId(null);
         }
     };
 
@@ -183,6 +210,27 @@ export default function TestList({tests: initialTests}) {
                                 >
                                     Review
                                 </Link>
+                                {!submissionChecks[test.id] ? (
+                                    <>
+                                        <Link
+                                            href={`/admin/tests/edit/${test.id}`}
+                                            className="bg-green-100 text-green-800 px-3 py-1.5 rounded-md text-sm hover:bg-green-200 transition-colors"
+                                        >
+                                            Edit
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDelete(test.id)}
+                                            disabled={deletingId === test.id}
+                                            className={`bg-red-100 text-red-800 px-3 py-1.5 rounded-md text-sm ${
+                                                deletingId === test.id ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-200'
+                                            }`}
+                                        >
+                                            {deletingId === test.id ? 'Deleting...' : 'Delete'}
+                                        </button>
+                                    </>
+                                ) : (
+                                    <span className="text-gray-500 text-sm">Edits blocked (has submissions)</span>
+                                )}
                             </td>
                         </tr>
                     ))}
