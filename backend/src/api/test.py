@@ -74,7 +74,9 @@ class TestDto(BaseModel):
 @router.get("/")
 async def get_tests(db: db_dep, is_template: bool):
     try:
-        return await db.get_entries(Test, {"isTemplate": is_template})
+        tests = await db.get_entries(Test, {"isTemplate": is_template})
+        tests = sorted(tests, key=lambda t: t.date_created, reverse=True)
+        return tests
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching tests: {str(e)}")
 
@@ -329,9 +331,14 @@ async def edit_test(db: db_dep, test_id: str, dto: TestDto):
             raise HTTPException(400, "Cannot edit test with existing submissions")
 
         test = await db.get_entry(ObjectId(test_id), Test)
+        template = await db.get_entry(ObjectId(dto.template_id), Test)
         test.template_id = dto.template_id
         test.sector = dto.sector
         test.password = dto.password
+        test.date_created = datetime.now()
+        test.title = template.title
+        test.description = template.description
+        test.total_questions = template.total_questions
         await db.update_entry(test)
         return Response(description="Test edited")
     except Exception as e:

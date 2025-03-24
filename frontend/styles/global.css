@@ -1,1 +1,4 @@
 @import "tailwindcss";
+@import url('auth.css');
+@import url('loader.css');
+@import url('./delete_button.css');

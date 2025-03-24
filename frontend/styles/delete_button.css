@@ -1,0 +1,84 @@
+.btn {
+    cursor: pointer;
+    width: 30px;
+    height: 32px;
+    border: none;
+    position: relative;
+    border-radius: 10px;
+    -webkit-box-shadow: 1px 1px 5px .2px #00000035;
+    box-shadow: 1px 1px 5px .2px #00000035;
+    -webkit-transition: .2s linear;
+    transition: .2s linear;
+    transition-delay: .2s;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: space-between;
+    padding: 0.375rem 0.75rem;
+    background-color: inherit;
+    color: inherit;
+    display: inline-flex;
+    vertical-align: baseline;
+    margin-left: 0.5rem;
+}
+
+.btn:hover {
+    width: 100px;
+    transition-delay: .2s;
+}
+
+.btn:hover > .paragraph {
+    visibility: visible;
+    opacity: 1;
+    -webkit-transition-delay: .4s;
+    transition-delay: .4s;
+}
+
+.btn:hover > .icon-wrapper .icon {
+    transform: scale(1.1);
+}
+
+.bnt:hover > .icon-wrapper .icon path {
+    stroke: black;
+}
+
+.paragraph {
+    color: black;
+    visibility: hidden;
+    opacity: 0;
+    font-size: 10px;
+    margin-right: 10px;
+    padding-left: 10px;
+    -webkit-transition: .2s linear;
+    transition: .2s linear;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.icon-wrapper {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.icon {
+    transform: scale(.9);
+    transition: .2s linear;
+}
+
+.icon path {
+    stroke: #000;
+    stroke-width: 2px;
+    -webkit-transition: .2s linear;
+    transition: .2s linear;
+}

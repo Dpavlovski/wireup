@@ -2,11 +2,15 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {useAuth} from "../../utils/AuthProvider";
 import {login, register} from "../../utils/api";
+import logo from "../../styles/logo.png"
+import Image from "next/image";
+import Loader from "../loader/loader";
 
 export default function AuthForm() {
     const [isRegister, setIsRegister] = useState(true);
     const [formData, setFormData] = useState({username: "", password: ""});
     const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const {user, setUser} = useAuth();
     const router = useRouter();
 
@@ -25,65 +29,102 @@ export default function AuthForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
+        setIsLoading(true); // Start loading
+
+        if (formData.username.length < 3 || formData.password.length < 3) {
+            setError("Username and password must be at least 3 characters");
+            setIsLoading(false);
+            return;
+        }
+
         try {
             if (isRegister) {
                 await register(formData.username, formData.password);
             }
             const loggedInUser = await login(formData.username, formData.password);
+
             setUser(loggedInUser);
+
         } catch (err) {
-            setError(err.message || "Something went wrong");
+            if (err.response) {
+                setError(err.response.data.detail || "An error occurred");
+            } else {
+                setError("Network error. Please try again.");
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
-            <div className="card p-4 shadow-sm" style={{maxWidth: "400px", width: "100%"}}>
-                <h2 className="card-title text-center mb-4">{isRegister ? "Register" : "Login"}</h2>
-                {error && <div className="alert alert-danger">{error}</div>}
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                        <label htmlFor="username" className="form-label">
-                            Username
-                        </label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="username"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="password" className="form-label">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            id="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="btn btn-primary w-100">
-                        {isRegister ? "Register & Login" : "Login"}
-                    </button>
-                </form>
-                <div className="mt-3 text-center">
-                    <button
-                        type="button"
-                        className="btn btn-link"
-                        onClick={() => setIsRegister(!isRegister)}
-                    >
-                        {isRegister ? "Already have an account? Login" : "New here? Register"}
-                    </button>
-                </div>
+        <div className="form-container">
+
+            <div className="logo_container">
+                <Image
+                    src={logo}
+                    alt="App Logo"
+                    className="h-14 w-auto"
+                    width="120"
+                    height="56"
+                />
             </div>
+
+            <div className="title-container flex items-center justify-center gap-2 mb-4">
+                <p className="title text-2xl font-bold">{isRegister ? "Create Account" : "Welcome back!"}</p>
+            </div>
+            <form className="form" onSubmit={handleSubmit}>
+                {isRegister && <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-200 text-sm text-gray-700">
+                    ℹ️ Before accessing the survey, please create an account. Choose a username that you'll remember but
+                    is also as anonymous as possible.
+                </div>}
+                <input
+                    type="text"
+                    className="input"
+                    placeholder="Username"
+                    id="username"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                />
+                <input
+                    type="password"
+                    className="input"
+                    placeholder="Password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                />
+
+                {error && (
+                    <div className="mt-2 text-red-600 text-sm flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20"
+                             fill="currentColor">
+                            <path fillRule="evenodd"
+                                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                  clipRule="evenodd"/>
+                        </svg>
+                        {error}
+                    </div>
+                )}
+                {isLoading ? <Loader/> :
+                    <button className="form-btn">
+                        {isRegister ? "Sign up" : "Login"}
+                    </button>
+                }
+            </form>
+
+            <p className="sign-up-label">
+                {isRegister ? "Already have an account?" : "Don't have an account?"}
+                <span
+                    onClick={() => setIsRegister(!isRegister)}
+                    className="sign-up-link"
+                >
+                    {isRegister ? "Sign In" : "Sign Up"}
+                </span>
+            </p>
         </div>
     );
 }

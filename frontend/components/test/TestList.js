@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 import {activateTest, checkTestSubmissions, deleteTest} from "../../utils/api";
+import DeleteButton from "../DeleteButton/DeleteButton";
 
 export default function TestList({tests: initialTests}) {
     const [localTests, setLocalTests] = useState(initialTests);
@@ -18,7 +19,6 @@ export default function TestList({tests: initialTests}) {
             for (const test of initialTests) {
                 const hasSubmissions = await checkTestSubmissions(test.id);
                 checks[test.id] = hasSubmissions;
-                console.log(hasSubmissions)
             }
             setSubmissionChecks(checks);
             setLocalTests(initialTests);
@@ -50,7 +50,6 @@ export default function TestList({tests: initialTests}) {
                 )
             );
         } catch (error) {
-            console.error("Activation failed:", error);
         } finally {
             setLoadingId(null);
         }
@@ -64,7 +63,6 @@ export default function TestList({tests: initialTests}) {
             await deleteTest(id);
             setLocalTests(prev => prev.filter(test => test.id !== id));
         } catch (error) {
-            console.error("Delete failed:", error);
             alert(error.response?.data?.detail || "Could not delete test");
         } finally {
             setDeletingId(null);
@@ -218,15 +216,7 @@ export default function TestList({tests: initialTests}) {
                                         >
                                             Edit
                                         </Link>
-                                        <button
-                                            onClick={() => handleDelete(test.id)}
-                                            disabled={deletingId === test.id}
-                                            className={`bg-red-100 text-red-800 px-3 py-1.5 rounded-md text-sm ${
-                                                deletingId === test.id ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-200'
-                                            }`}
-                                        >
-                                            {deletingId === test.id ? 'Deleting...' : 'Delete'}
-                                        </button>
+                                        <DeleteButton handleDelete={() => handleDelete(test.id)}/>
                                     </>
                                 ) : (
                                     <span className="text-gray-500 text-sm">Edits blocked (has submissions)</span>

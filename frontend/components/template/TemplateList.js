@@ -2,6 +2,7 @@ import Link from "next/link";
 import {useState} from "react";
 import {Button, Modal} from "react-bootstrap";
 import toast, {Toaster} from "react-hot-toast";
+import DeleteButton from "../DeleteButton/DeleteButton";
 
 export default function TemplatesList({templates, handleCopy, handleDelete}) {
     const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -25,8 +26,7 @@ export default function TemplatesList({templates, handleCopy, handleDelete}) {
             } else {
                 toast.error(error.response?.data?.detail || "An error occurred while deleting the template.");
             }
-        }
-        finally {
+        } finally {
             closeDeleteModal();
         }
     };
@@ -102,12 +102,13 @@ export default function TemplatesList({templates, handleCopy, handleDelete}) {
                                         >
                                             Copy
                                         </button>
-                                        <button
-                                            className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700"
-                                            onClick={() => openDeleteModal(template)}
-                                        >
-                                            Delete
-                                        </button>
+                                        <DeleteButton handleDelete={() => openDeleteModal(template)}/>
+                                        {/*<button*/}
+                                        {/*    className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700"*/}
+                                        {/*    onClick={() => openDeleteModal(template)}*/}
+                                        {/*>*/}
+                                        {/*    Delete*/}
+                                        {/*</button>*/}
                                     </div>
                                 </div>
                             </div>

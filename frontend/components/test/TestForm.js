@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {addTest, editTest, getTemplates} from "../../utils/api";
+import Loader from "../loader/loader";
+import toast from "react-hot-toast";
 
 export default function TestForm({initialData}) {
     const router = useRouter();
@@ -32,7 +34,7 @@ export default function TestForm({initialData}) {
         };
 
         fetchData();
-    }, [initialData?.id, isEditMode]);
+    }, [initialData,isEditMode]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -47,8 +49,10 @@ export default function TestForm({initialData}) {
 
             if (isEditMode) {
                 await editTest(initialData.id, testData);
+                toast("Test edited");
             } else {
                 await addTest(testData);
+                toast("Test created");
             }
 
             router.push("/admin/tests");
@@ -118,7 +122,7 @@ export default function TestForm({initialData}) {
                     className="btn btn-primary"
                     disabled={loading}
                 >
-                    {loading ? "Saving..." : (isEditMode ? "Save Changes" : "Create Test")}
+                    {loading ? <Loader/> : (isEditMode ? "Save Changes" : "Create Test")}
                 </button>
             </form>
         </div>
