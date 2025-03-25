@@ -116,7 +116,7 @@ export const getSubmittedTest = async (id) => {
 
 export const getSubmittedTemplatesByUser = async (id) => {
     try {
-        const response = await api.get('/test/submitted/' + id);
+        const response = await api.get('/test/submitted/user/' + id);
         return response.data;
     } catch (error) {
         console.error('Error fetching tests:', error);

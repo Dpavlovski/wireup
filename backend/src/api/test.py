@@ -111,7 +111,7 @@ async def get_submitted_tests(db: db_dep, id: str):
         raise HTTPException(status_code=500, detail=f"Error fetching submitted tests: {str(e)}")
 
 
-@router.get("/submitted/{id}")
+@router.get("/submitted/user/{id}")
 async def get_submitted_templates_by_user(db: db_dep, id: str):
     try:
         submit_tests = await db.get_entries(SubmittedTest, {"user_id": id})

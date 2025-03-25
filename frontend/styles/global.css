@@ -2,3 +2,6 @@
 @import url('auth.css');
 @import url('loader.css');
 @import url('./delete_button.css');
+@import url('./copy_button.css');
+@import url('./add_button.css');
+@import url('./start_button.css');

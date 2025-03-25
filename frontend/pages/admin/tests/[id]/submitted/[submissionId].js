@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {getSubmittedTest} from "../../../../../utils/api";
 import SubmittedTestView from "../../../../../components/test/SubmittedTestView";
 import ProtectedRoute from "../../../../../utils/ProtectedRoute";
+import Loader from "../../../../../components/loader/loader";
 
 export default function SubmittedTest() {
     const router = useRouter();
@@ -31,7 +32,7 @@ export default function SubmittedTest() {
             });
     }, [submissionId]);
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <Loader/>;
     if (error) return <p>Error: {error}</p>;
     if (!submission) return <p>No submission data found</p>;
 

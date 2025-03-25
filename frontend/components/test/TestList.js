@@ -2,6 +2,7 @@ import Link from "next/link";
 import {useEffect, useState} from "react";
 import {activateTest, checkTestSubmissions, deleteTest} from "../../utils/api";
 import DeleteButton from "../DeleteButton/DeleteButton";
+import AddButton from "../add_button/AddButton";
 
 export default function TestList({tests: initialTests}) {
     const [localTests, setLocalTests] = useState(initialTests);
@@ -96,7 +97,6 @@ export default function TestList({tests: initialTests}) {
                 </div>
                 <Link
                     href="/admin/tests/add"
-                    className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm"
                 >
                     Create First Test
                     <svg
@@ -122,9 +122,9 @@ export default function TestList({tests: initialTests}) {
                 <h1 className="text-2xl font-bold text-gray-900">All Tests</h1>
                 <Link
                     href="/admin/tests/add"
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                    className="text-decoration-none"
                 >
-                    Create Test
+                    <AddButton text={"Create Test"}/>
                 </Link>
             </div>
 
