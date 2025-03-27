@@ -3,6 +3,9 @@ import {useEffect, useState} from "react";
 import {activateTest, checkTestSubmissions, deleteTest} from "../../utils/api";
 import DeleteButton from "../DeleteButton/DeleteButton";
 import AddButton from "../add_button/AddButton";
+import EditButton from "../edit_button/edit";
+import toast, {Toaster} from "react-hot-toast";
+import DeleteModal from "../delete_modal/DeleteModal";
 
 export default function TestList({tests: initialTests}) {
     const [localTests, setLocalTests] = useState(initialTests);
@@ -11,7 +14,7 @@ export default function TestList({tests: initialTests}) {
     const [searchQuery, setSearchQuery] = useState("");
     const [testsPerPage] = useState(10);
     const [loadingId, setLoadingId] = useState(null);
-    const [deletingId, setDeletingId] = useState(null);
+    const [deletingTest, setDeletingTest] = useState(null);
     const [submissionChecks, setSubmissionChecks] = useState({});
 
     useEffect(() => {
@@ -56,17 +59,36 @@ export default function TestList({tests: initialTests}) {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this test? This action cannot be undone.")) return;
+    const openDeleteModal = (test) => {
+        setDeletingTest(test);
+    };
 
+    const closeDeleteModal = () => {
+        setDeletingTest(null);
+    };
+
+    const confirmDelete = async () => {
+        if (!deletingTest) return;
         try {
-            setDeletingId(id);
+            await handleDelete(deletingTest.id);
+            toast.success("Test deleted successfully");
+        } catch (error) {
+            if (error.response && error.response.status === 409) {
+                toast.error(error.response.data?.detail || "Cannot delete test with existing submissions");
+            } else {
+                toast.error(error.response?.data?.detail || "Failed to delete test");
+            }
+        } finally {
+            closeDeleteModal();
+        }
+    };
+
+    const handleDelete = async (id) => {
+        try {
             await deleteTest(id);
             setLocalTests(prev => prev.filter(test => test.id !== id));
         } catch (error) {
-            alert(error.response?.data?.detail || "Could not delete test");
-        } finally {
-            setDeletingId(null);
+            throw error;
         }
     };
 
@@ -118,6 +140,14 @@ export default function TestList({tests: initialTests}) {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <Toaster position="bottom-right"/>
+
+            <DeleteModal
+                selectedElement={deletingTest}
+                name={deletingTest ? ` "${deletingTest.title}"` : ""}
+                closeDeleteModal={closeDeleteModal}
+                confirmDelete={confirmDelete}
+            />
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <h1 className="text-2xl font-bold text-gray-900">All Tests</h1>
                 <Link
@@ -212,11 +242,11 @@ export default function TestList({tests: initialTests}) {
                                     <>
                                         <Link
                                             href={`/admin/tests/edit/${test.id}`}
-                                            className="bg-green-100 text-green-800 px-3 py-1.5 rounded-md text-sm hover:bg-green-200 transition-colors"
+                                            className="text-decoration-none"
                                         >
-                                            Edit
+                                            <EditButton/>
                                         </Link>
-                                        <DeleteButton handleDelete={() => handleDelete(test.id)}/>
+                                        <DeleteButton handleDelete={() => openDeleteModal(test)}/>
                                     </>
                                 ) : (
                                     <span className="text-gray-500 text-sm">Edits blocked (has submissions)</span>

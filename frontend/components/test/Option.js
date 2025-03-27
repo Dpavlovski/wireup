@@ -1,19 +1,19 @@
 export function Option({questionId, option, onSelect, answer}) {
+    const isSelected = answer === option.id;
 
     return (
         <label
-            className={`btn btn-outline-primary btn-lg rounded-circle ${answer === option.id ? 'bg-primary text-white' : ''}`}
-            style={{cursor: "pointer"}}
+            className={`option-button ${isSelected ? 'option-selected' : ''}`}
         >
             <input
                 type="radio"
                 name={`question-${questionId}`}
                 value={option.id}
-                checked={answer === option.id}
+                checked={isSelected}
                 onChange={() => onSelect(questionId, option.id)}
-                className="d-none"
+                className="option-input"
             />
-            {option.value}
+            <span className="option-value">{option.value}</span>
         </label>
     );
 }

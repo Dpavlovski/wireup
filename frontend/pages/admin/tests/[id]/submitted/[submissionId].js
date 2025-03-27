@@ -24,6 +24,7 @@ export default function SubmittedTest() {
                     setSubmission(data);
                 }
                 setLoading(false);
+                console.log(data);
             })
             .catch((err) => {
                 console.error("Error fetching submission:", err);

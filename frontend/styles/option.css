@@ -1,0 +1,41 @@
+.option-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border: 2px solid #008080; /* Teal border */
+    border-radius: 50%;
+    background-color: white;
+    color: #008080; /* Teal color */
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.option-button:hover {
+    background-color: #e6f2f2; /* Light teal on hover */
+    transform: scale(1.05);
+}
+
+.option-selected {
+    background-color: #008080; /* Teal background */
+    color: white;
+}
+
+.option-input {
+    position: absolute;
+    opacity: 0;
+    height: 0;
+    width: 0;
+}
+
+.option-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}

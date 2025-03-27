@@ -1,10 +1,10 @@
 import Link from "next/link";
 import {useState} from "react";
-import {Button, Modal} from "react-bootstrap";
 import toast, {Toaster} from "react-hot-toast";
 import DeleteButton from "../DeleteButton/DeleteButton";
 import CopyButton from "../copy_button/CopyButton";
 import AddButton from "../add_button/AddButton";
+import DeleteModal from "../delete_modal/DeleteModal";
 
 export default function TemplatesList({templates, handleCopy, handleDelete}) {
     const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -37,27 +37,12 @@ export default function TemplatesList({templates, handleCopy, handleDelete}) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <Toaster position="bottom-right"/>
 
-            <Modal show={!!selectedTemplate} onHide={closeDeleteModal} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirm Delete</Modal.Title>
-                </Modal.Header>
-
-                <Modal.Body>
-                    <p className="text-gray-600">
-                        Are you sure you want to delete the template
-                        {selectedTemplate ? ` "${selectedTemplate.title}"` : ""}? This action cannot be undone.
-                    </p>
-                </Modal.Body>
-
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={closeDeleteModal}>
-                        Cancel
-                    </Button>
-                    <Button variant="danger" onClick={confirmDelete}>
-                        Delete
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <DeleteModal
+                selectedElement={selectedTemplate}
+                name={selectedTemplate ? ` "${selectedTemplate.title}"` : ""}
+                closeDeleteModal={closeDeleteModal}
+                confirmDelete={confirmDelete}
+            />
 
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900">Manage Test Templates</h1>

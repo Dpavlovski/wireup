@@ -3,6 +3,7 @@ import {useRouter} from "next/navigation";
 import {addTest, editTest, getTemplates} from "../../utils/api";
 import Loader from "../loader/loader";
 import toast from "react-hot-toast";
+import BackButton from "../back_button/BackButton";
 
 export default function TestForm({initialData}) {
     const router = useRouter();
@@ -30,11 +31,12 @@ export default function TestForm({initialData}) {
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
+                toast.error("Failed to load templates");
             }
         };
 
         fetchData();
-    }, [initialData,isEditMode]);
+    }, [initialData, isEditMode]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -49,82 +51,107 @@ export default function TestForm({initialData}) {
 
             if (isEditMode) {
                 await editTest(initialData.id, testData);
-                toast("Test edited");
+                toast.success("Test updated successfully!");
             } else {
                 await addTest(testData);
-                toast("Test created");
+                toast.success("Test created successfully!");
             }
 
             router.push("/admin/tests");
         } catch (error) {
             console.error("Form submission failed:", error);
-            alert(error.response?.data?.detail || "An error occurred");
+            toast.error(error.response?.data?.detail || "An error occurred");
         } finally {
             setLoading(false);
         }
     };
 
+    const handleBack = () => {
+        router.push("/admin/tests");
+    };
+
     return (
-        <div className="container mt-5">
-            <h1 className="mb-4">{isEditMode ? "Edit Test" : "Create Test from Template"}</h1>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label htmlFor="template" className="form-label">
-                        Template {!isEditMode && "*"}
-                    </label>
-                    <select
-                        id="template"
-                        className="form-select"
-                        value={selectedTemplate}
-                        onChange={(e) => setSelectedTemplate(e.target.value)}
-                        required
-                    >
-                        {!isEditMode && (
-                            <option value="">-- Choose a Template --</option>
-                        )}
-                        {templates.map((template) => (
-                            <option key={template.id} value={template.id}>
-                                {template.title}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="sector" className="form-label">
-                        Sector *
-                    </label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="sector"
-                        value={sector}
-                        onChange={(e) => setSector(e.target.value)}
-                        placeholder="Enter sector"
-                        required
-                    />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="password" className="form-label">
-                        Password *
-                    </label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter password"
-                        required
-                    />
-                </div>
-                <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={loading}
-                >
-                    {loading ? <Loader/> : (isEditMode ? "Save Changes" : "Create Test")}
-                </button>
-            </form>
+        <div className="max-w-2xl mx-auto mt-8 px-4">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold text-teal-700">
+                    {isEditMode ? "Edit Test" : "Create New Test"}
+                </h1>
+                <BackButton onClick={handleBack} />
+            </div>
+
+            <div className="bg-white rounded-lg shadow-lg p-6 border border-teal-50">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                        <label htmlFor="template" className="block text-sm font-medium text-teal-700 mb-2">
+                            Template {!isEditMode && <span className="text-red-500">*</span>}
+                        </label>
+                        <select
+                            id="template"
+                            className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                            value={selectedTemplate}
+                            onChange={(e) => setSelectedTemplate(e.target.value)}
+                            required
+                        >
+                            {!isEditMode && (
+                                <option value="" className="text-gray-400">Select a template</option>
+                            )}
+                            {templates.map((template) => (
+                                <option
+                                    key={template.id}
+                                    value={template.id}
+                                    className="text-gray-700"
+                                >
+                                    {template.title}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label htmlFor="sector" className="block text-sm font-medium text-teal-700 mb-2">
+                            Sector <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                            id="sector"
+                            value={sector}
+                            onChange={(e) => setSector(e.target.value)}
+                            placeholder="Enter sector"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="password" className="block text-sm font-medium text-teal-700 mb-2">
+                            Password <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Enter password"
+                            required
+                        />
+                    </div>
+
+                    <div className="mt-8">
+                        <button
+                            type="submit"
+                            className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-2.5 px-5 rounded-lg transition-all duration-200 flex items-center justify-center"
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <Loader className="h-5 w-5 text-white" />
+                            ) : (
+                                isEditMode ? "Save Changes" : "Create Test"
+                            )}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }

@@ -2,6 +2,8 @@ import {useEffect, useState} from "react";
 import {copyTemplate, deleteTemplate, getTemplates} from "../../../utils/api";
 import TemplateList from "../../../components/template/TemplateList";
 import ProtectedRoute from "../../../utils/ProtectedRoute";
+import {toast} from "react-hot-toast";
+import Loader from "../../../components/loader/loader";
 
 export default function Templates() {
     const [templates, setTemplates] = useState([]);
@@ -13,7 +15,7 @@ export default function Templates() {
                 const data = await getTemplates();
                 setTemplates(data);
             } catch (err) {
-                console.error("Error fetching templates:", err);
+                toast.error("Error fetching templates:", err.response.data.message);
             } finally {
                 setIsLoading(false);
             }
@@ -27,8 +29,9 @@ export default function Templates() {
             await copyTemplate(id);
             const updatedTemplates = await getTemplates();
             setTemplates(updatedTemplates);
+            toast.success("Template copied successfully!");
         } catch (err) {
-            console.error("Error copying template:", err);
+           toast.error("Error copying template:", err.response.data.message);
         }
     };
 
@@ -42,7 +45,7 @@ export default function Templates() {
     };
 
     if (isLoading) {
-        return <div>Loading templates...</div>;
+        return <Loader />;
     }
 
     return (

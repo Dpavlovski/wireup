@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {addTemplate, checkExistingTests, editTemplate} from "../../utils/api";
 import toast from "react-hot-toast";
+import BackButton from "../back_button/BackButton";
 
 export default function TemplateForm({isPreview = false, initialData}) {
 
@@ -11,7 +12,7 @@ export default function TemplateForm({isPreview = false, initialData}) {
     const [description, setDescription] = useState("");
     const [questions, setQuestions] = useState([]);
     const [isEditing, setIsEditing] = useState(!isPreview);
-    const [hasExistingTests, setHasExistingTests] = useState(false); // Better naming
+    const [hasExistingTests, setHasExistingTests] = useState(false);
 
     const isDisabled = isPreview && !isEditing;
 
@@ -43,11 +44,9 @@ export default function TemplateForm({isPreview = false, initialData}) {
         initializeForm();
     }, [initialData, isPreview]);
 
-
     const MAX_QUESTIONS = 50;
     const MIN_OPTIONS = 2;
     const MAX_OPTIONS = 10;
-
     const recommendedOptions = ["1", "2", "3", "4", "5"];
 
 
@@ -146,51 +145,36 @@ export default function TemplateForm({isPreview = false, initialData}) {
         }
     };
 
+    const handleBack = () => {
+        router.push("/admin/templates");
+    };
+
     return (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex items-center justify-between mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+            <div className="flex justify-between items-center mb-8">
+                <h1 className="text-2xl font-bold text-teal-800">
                     {initialData
                         ? (isEditing ? "Edit Template" : "Template Preview")
-                        : "Create New Test Template"}
+                        : "Create New Template"}
                 </h1>
-                <div className="flex items-center gap-4">
-                    {isPreview && !isEditing && !hasExistingTests && (
-                        <button
-                            onClick={() => setIsEditing(true)}
-                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200 font-medium"
-                        >
-                            Edit Template
-                        </button>
-                    )}
-                    <button
-                        onClick={() => router.back()}
-                        className="text-gray-600 hover:text-gray-800 flex items-center"
-                    >
-                        <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                  d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
-                        Back
-                    </button>
-                </div>
+                <BackButton onClick={handleBack}/>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6 border border-teal-50">
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Test Title *
+                        <label className="block text-sm font-medium text-teal-700 mb-2">
+                            Template Title *
                         </label>
-                        {(isPreview && !isEditing) ? (
-                            <div className="text-lg font-medium text-gray-900">{title}</div>
+                        {isPreview && !isEditing ? (
+                            <div className="text-lg font-medium text-teal-900">{title}</div>
                         ) : (
                             <input
                                 type="text"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                placeholder="Enter test title"
+                                placeholder="Enter template title"
                                 required
                                 disabled={isDisabled}
                             />
@@ -198,18 +182,18 @@ export default function TemplateForm({isPreview = false, initialData}) {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-teal-700 mb-2">
                             Description *
                         </label>
-                        {(isPreview && !isEditing) ? (
-                            <p className="text-gray-600 whitespace-pre-line">{description}</p>
+                        {isPreview && !isEditing ? (
+                            <p className="text-teal-700 whitespace-pre-line">{description}</p>
                         ) : (
                             <textarea
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                                 rows="4"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
-                                placeholder="Enter test description"
+                                placeholder="Enter template description"
                                 required
                                 disabled={isDisabled}
                             />
@@ -217,11 +201,11 @@ export default function TemplateForm({isPreview = false, initialData}) {
                     </div>
 
                     <div className="space-y-6">
-                        <h3 className="text-lg font-medium text-gray-900">Questions</h3>
+                        <h3 className="text-lg font-medium text-teal-800">Questions</h3>
                         {questions.map((question, qIndex) => (
-                            <div key={qIndex} className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                            <div key={qIndex} className="bg-white p-6 rounded-lg border border-teal-100">
                                 <div className="flex justify-between items-center mb-4">
-                                    <span className="text-sm font-medium text-gray-700">
+                                    <span className="text-sm font-medium text-teal-700">
                                         Question {qIndex + 1}
                                     </span>
                                     {(isEditing || !isPreview) && questions.length > 1 && (
@@ -229,18 +213,19 @@ export default function TemplateForm({isPreview = false, initialData}) {
                                             type="button"
                                             className="text-red-600 hover:text-red-700 text-sm font-medium"
                                             onClick={() => handleRemoveQuestion(qIndex)}
+                                            disabled={isDisabled}
                                         >
                                             Remove Question
                                         </button>
                                     )}
                                 </div>
 
-                                {(isPreview && !isEditing) ? (
-                                    <h4 className="text-base font-medium text-gray-900 mb-4">{question.question}</h4>
+                                {isPreview && !isEditing ? (
+                                    <h4 className="text-base font-medium text-teal-900 mb-4">{question.question}</h4>
                                 ) : (
                                     <input
                                         type="text"
-                                        className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                                         value={question.question}
                                         onChange={(e) => handleQuestionChange(qIndex, "question", e.target.value)}
                                         placeholder="Enter question"
@@ -250,20 +235,18 @@ export default function TemplateForm({isPreview = false, initialData}) {
                                 )}
 
                                 <div className="space-y-3">
-                                    <label className="block text-sm font-medium text-gray-700">Options</label>
+                                    <label className="block text-sm font-medium text-teal-700">Options</label>
                                     {question.options.map((option, oIndex) => (
                                         <div key={oIndex} className="flex items-center gap-2">
-                                            {(isPreview && !isEditing) ? (
-                                                <div className="flex items-center w-full p-3 bg-gray-50 rounded-md">
-                    <span className="text-gray-700">
-                        {option}
-                    </span>
+                                            {isPreview && !isEditing ? (
+                                                <div className="flex items-center w-full p-3 bg-teal-50 rounded-lg">
+                                                    <span className="text-teal-800">{option}</span>
                                                 </div>
                                             ) : (
                                                 <>
                                                     <input
                                                         type="text"
-                                                        className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                                                         value={option}
                                                         onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
                                                         placeholder={`Option ${oIndex + 1}`}
@@ -275,6 +258,7 @@ export default function TemplateForm({isPreview = false, initialData}) {
                                                             type="button"
                                                             className="px-3 py-1.5 text-red-600 hover:text-red-700 font-medium"
                                                             onClick={() => handleRemoveOption(qIndex, oIndex)}
+                                                            disabled={isDisabled}
                                                         >
                                                             Remove
                                                         </button>
@@ -288,9 +272,9 @@ export default function TemplateForm({isPreview = false, initialData}) {
                                 {(isEditing || !isPreview) && (
                                     <button
                                         type="button"
-                                        className="mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                                        className="mt-4 text-sm text-teal-600 hover:text-teal-700 font-medium"
                                         onClick={() => handleAddOption(qIndex)}
-                                        disabled={isDisabled}
+                                        disabled={isDisabled || question.options.length >= MAX_OPTIONS}
                                     >
                                         + Add Option
                                     </button>
@@ -301,18 +285,18 @@ export default function TemplateForm({isPreview = false, initialData}) {
                 </div>
 
                 {(isEditing || !isPreview) && (
-                    <div className="flex justify-between items-center border-t pt-6">
+                    <div className="flex justify-between items-center border-t border-teal-100 pt-6">
                         <button
                             type="button"
-                            className="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md font-medium"
+                            className="px-6 py-2 bg-teal-100 hover:bg-teal-200 text-teal-800 rounded-lg font-medium"
                             onClick={handleAddQuestion}
-                            disabled={isDisabled}
+                            disabled={isDisabled || questions.length >= MAX_QUESTIONS}
                         >
                             + Add Question
                         </button>
                         <button
                             type="submit"
-                            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium"
+                            className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium"
                         >
                             {initialData ? "Save Changes" : "Create Template"}
                         </button>

@@ -1,138 +1,139 @@
-import {useState} from "react";
-import {Question} from "./Question";
-import {submitTest, TestSubmission} from "../../utils/api";
-import {useRouter} from "next/router";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import BackButton from "../back_button/BackButton"; // Import your BackButton component
 
-export function TestView({user, id, title, description, questions}) {
+export function SubmittedTestList({ tests }) {
     const router = useRouter();
+    const { id } = router.query;
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
-    const [answers, setAnswers] = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [warning, setWarning] = useState("");
-
-    const handleSelect = (question_id, option_id) => {
-        setAnswers((prev) => {
-            const updatedAnswers = prev.filter((a) => a.question_id !== question_id);
-            return [...updatedAnswers, {question_id, option_id}];
-        });
-        setWarning("");
+    const handleBack = () => {
+        router.push(`/admin/tests`);
     };
 
-    const handlePrev = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex((prev) => prev - 1);
-            setWarning("");
-        }
-    };
-
-    const handleNext = () => {
-        if (currentIndex < questions.length - 1) {
-            setCurrentIndex((prev) => prev + 1);
-            setWarning("");
-        }
-    };
-
-    const handleSubmit = async () => {
-        if (answers.length < questions.length) {
-            setWarning("Please answer all questions before submitting the test.");
-            return;
-        }
-        const unanswered = questions.filter(
-            (q) => !answers.find((a) => a.question_id === q.id)
+    if (!tests || tests.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center h-64 space-y-4">
+                <div className="bg-teal-100 p-4 rounded-full">
+                    <svg
+                        className="w-8 h-8 text-teal-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                    </svg>
+                </div>
+                <p className="text-gray-600 text-lg">No submissions available</p>
+                <BackButton onClick={handleBack} />
+            </div>
         );
-        if (unanswered.length > 0) {
-            setWarning("Please answer all questions before submitting the test.");
-            return;
-        }
+    }
 
-        try {
-            const testSubmission = new TestSubmission(id, user.id, answers);
-            const response = await submitTest(testSubmission);
-            alert(response.message);
-            await router.push(`/`);
-        } catch (error) {
-            console.error("Error submitting tests:", error);
-            alert("Failed to submit test.");
-        }
-    };
-
-    const currentQuestion = questions[currentIndex];
-    const totalQuestions = questions.length;
-    const answeredCount = answers.length;
-    const progressPercent = Math.round((answeredCount / totalQuestions) * 100);
-
-    const allAnswered = questions.every((q) =>
-        answers.find((a) => a.question_id === q.id)
+    const totalPages = Math.ceil(tests.length / itemsPerPage);
+    const currentItems = tests.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
     );
 
     return (
-        <div
-            className="container mt-5 p-4 border rounded shadow-lg bg-light"
-            style={{maxWidth: "800px"}}
-        >
-            <h1 className="text-primary text-center">{title}</h1>
-            <h5 className="text-muted text-center mb-4">{description}</h5>
+        <div className="container mx-auto px-4 py-8">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold text-teal-800">Submitted Tests</h1>
+                <BackButton onClick={handleBack} />
+            </div>
 
-            <div className="mb-4">
-                <div className="progress" style={{height: "24px"}}>
-                    <div
-                        className="progress-bar progress-bar-striped bg-info"
-                        role="progressbar"
-                        style={{width: `${progressPercent}%`}}
-                        aria-valuenow={progressPercent}
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                    >
-                        {progressPercent}%
+            <div className="bg-white rounded-lg shadow-md overflow-hidden border border-teal-50">
+                <div className="p-6">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-teal-50">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-teal-800 uppercase tracking-wider">
+                                    User
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-teal-800 uppercase tracking-wider">
+                                    Submission Date
+                                </th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-teal-800 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                            {currentItems.map((submission) => (
+                                <tr key={submission.test.id} className="hover:bg-teal-50 transition-colors">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center">
+                                            <div className="ml-4">
+                                                <div className="text-sm font-medium text-teal-900">
+                                                    {submission.user.username}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-teal-700">
+                                            {new Date(submission.test.date_submitted).toLocaleDateString()}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <Link href={`/admin/tests/${id}/submitted/${submission.test.id}`} passHref>
+                                            <button className="text-teal-600 hover:text-teal-800 mr-4 font-medium hover:underline">
+                                                View Details
+                                            </button>
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
                     </div>
+
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-6">
+                            <div className="text-sm text-teal-700">
+                                Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                                <span className="font-medium">
+                                    {Math.min(currentPage * itemsPerPage, tests.length)}
+                                </span>{' '}
+                                of <span className="font-medium">{tests.length}</span> results
+                            </div>
+                            <div className="flex space-x-2">
+                                <button
+                                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className={`px-4 py-2 border rounded-md ${
+                                        currentPage === 1
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'bg-white text-teal-700 border-teal-300 hover:bg-teal-50'
+                                    }`}
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className={`px-4 py-2 border rounded-md ${
+                                        currentPage === totalPages
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'bg-white text-teal-700 border-teal-300 hover:bg-teal-50'
+                                    }`}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            </div>
-
-            {warning && (
-                <div className="alert alert-warning" role="alert">
-                    {warning}
-                </div>
-            )}
-
-            <div className="card mb-3">
-                <div className="card-body">
-                    <h5 className="card-title">
-                        Question {currentIndex + 1} of {totalQuestions}
-                    </h5>
-                    <Question
-                        question={currentQuestion}
-                        options={currentQuestion.options}
-                        onSelect={handleSelect}
-                        answer={
-                            answers.find((a) => a.question_id === currentQuestion.id)
-                                ?.option_id
-                        }
-                    />
-                </div>
-            </div>
-
-            <div className="d-flex justify-content-between">
-                <button
-                    className="btn btn-outline-secondary"
-                    onClick={handlePrev}
-                    disabled={currentIndex === 0}
-                >
-                    Previous
-                </button>
-
-                {currentIndex < totalQuestions - 1 ? (
-                    <button className="btn btn-primary" onClick={handleNext}>
-                        Next
-                    </button>
-                ) : (
-                    <button
-                        className="btn btn-success"
-                        onClick={handleSubmit}
-                        disabled={!allAnswered}
-                    >
-                        Submit Test
-                    </button>
-                )}
             </div>
         </div>
     );

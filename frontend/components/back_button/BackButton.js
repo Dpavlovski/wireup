@@ -1,30 +1,22 @@
-export default function BackButton({text}) {
-    return (
-        <button
-            className="bg-white text-center w-48 rounded-2xl h-14 relative text-black text-xl font-semibold group"
-            type="button"
-        >
-            <div
-                className="bg-teal-700 rounded-xl h-12 w-1/4 flex items-center justify-center absolute left-1 top-[4px] group-hover:w-[184px] z-10 duration-500"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1024 1024"
-                    height="25px"
-                    width="25px"
-                >
-                    <path
-                        d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"
-                        fill="#000000"
-                    ></path>
-                    <path
-                        d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"
-                        fill="#000000"
-                    ></path>
-                </svg>
-            </div>
-            <p className="translate-x-2">{text}</p>
-        </button>
+import React from 'react';
 
+export default function BackButton({onClick}) {
+    return (
+        <button onClick={onClick} className="back-button">
+            <div className="back-button-box">
+          <span className="back-button-elem">
+            <svg viewBox="0 0 46 40" xmlns="http://www.w3.org/2000/svg">
+              <path
+                  d="M46 20.038c0-.7-.3-1.5-.8-2.1l-16-17c-1.1-1-3.2-1.4-4.4-.3-1.2 1.1-1.2 3.3 0 4.4l11.3 11.9H3c-1.7 0-3 1.3-3 3s1.3 3 3 3h33.1l-11.3 11.9c-1 1-1.2 3.3 0 4.4 1.2 1.1 3.3.8 4.4-.3l16-17c.5-.5.8-1.1.8-1.9z"/>
+            </svg>
+          </span>
+                <span className="back-button-elem">
+            <svg viewBox="0 0 46 40">
+              <path
+                  d="M46 20.038c0-.7-.3-1.5-.8-2.1l-16-17c-1.1-1-3.2-1.4-4.4-.3-1.2 1.1-1.2 3.3 0 4.4l11.3 11.9H3c-1.7 0-3 1.3-3 3s1.3 3 3 3h33.1l-11.3 11.9c-1 1-1.2 3.3 0 4.4 1.2 1.1 3.3.8 4.4-.3l16-17c.5-.5.8-1.1.8-1.9z"/>
+            </svg>
+          </span>
+            </div>
+        </button>
     );
 }

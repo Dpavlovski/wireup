@@ -1,0 +1,219 @@
+.submission_container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.submission_header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.submission_title {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.submission_userCard {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 0 auto;
+    width: fit-content;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.submission_userTitle {
+    color: #34495e;
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.submission_testSection {
+    margin: 3rem 0;
+}
+
+.submission_testHeader {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.submission_testTitle {
+    color: #2980b9;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.submission_testDescription {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.submission_questionList {
+    list-style: none;
+    counter-reset: question-counter;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.submission_questionItem {
+    counter-increment: question-counter;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.submission_questionItem:hover {
+    transform: translateY(-2px);
+}
+
+.submission_questionItem::before {
+    content: counter(question-counter);
+    position: absolute;
+    left: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #2980b9;
+    color: white;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.submission_questionContent {
+    margin-left: 2rem;
+}
+
+.submission_questionText {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.submission_answerSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.submission_answerLabel {
+    color: #27ae60;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.submission_answerValue {
+    background: #ffffff;
+    padding: 0.8rem;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    color: #34495e;
+}
+
+.submission_checkIcon {
+    color: #27ae60;
+    font-size: 1.2rem;
+}
+
+.submission_missingAnswer {
+    background: #fff3cd;
+    color: #856404;
+    padding: 0.8rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.submission_actions {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.submission_submitButton {
+    background: #2980b9;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.submission_submitButton:hover {
+    background: #2471a3;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+}
+
+.submission_errorContainer {
+    max-width: 800px;
+    margin: 3rem auto;
+    text-align: center;
+}
+
+.submission_errorAlert {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.submission_backButton {
+    background: #6c757d;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.submission_backButton:hover {
+    background: #5a6268;
+}
+
+@media (max-width: 768px) {
+    .submission_container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .submission_title {
+        font-size: 2rem;
+    }
+
+    .submission_questionItem::before {
+        left: -1.5rem;
+        width: 2rem;
+        height: 2rem;
+    }
+}

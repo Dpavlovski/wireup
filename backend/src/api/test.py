@@ -47,6 +47,7 @@ class SubmittedTestReview(BaseModel):
     test: Test
     user: User
     question_answer: List[QuestionAnswer]
+    date_submitted: datetime
 
 
 class SubmittedTests(BaseModel):
@@ -286,7 +287,7 @@ async def get_submitted_test(db: db_dep, id: str):
             for qo in question_options if qo.question_id in question_dict and qo.option_id in options
         ]
 
-        return SubmittedTestReview(test=test, user=user, question_answer=question_answer)
+        return SubmittedTestReview(test=test, user=user, question_answer=question_answer, date_submitted= submitted_test.date_submitted)
     except Exception as e:
         raise HTTPException(status_code=400, detail=e)
 
