@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
-import {copyTemplate, deleteTemplate, getTemplates} from "../../../utils/api";
 import TemplateList from "../../../components/template/TemplateList";
 import ProtectedRoute from "../../../utils/ProtectedRoute";
 import {toast} from "react-hot-toast";
 import Loader from "../../../components/loader/loader";
+import TemplateService from "../../../api/templates/template.service";
 
 export default function Templates() {
     const [templates, setTemplates] = useState([]);
@@ -12,7 +12,7 @@ export default function Templates() {
     useEffect(() => {
         async function fetchTemplates() {
             try {
-                const data = await getTemplates();
+                const data = await TemplateService.getTemplates();
                 setTemplates(data);
             } catch (err) {
                 toast.error("Error fetching templates:", err.response.data.message);
@@ -26,18 +26,18 @@ export default function Templates() {
 
     const handleCopy = async (id) => {
         try {
-            await copyTemplate(id);
-            const updatedTemplates = await getTemplates();
+            await TemplateService.copyTemplate(id);
+            const updatedTemplates = await TemplateService.getTemplates();
             setTemplates(updatedTemplates);
             toast.success("Template copied successfully!");
         } catch (err) {
-           toast.error("Error copying template:", err.response.data.message);
+            toast.error("Error copying template:", err.response.data.message);
         }
     };
 
     const handleDelete = async (id) => {
         try {
-            await deleteTemplate(id);
+            await TemplateService.deleteTemplate(id);
             setTemplates((prev) => prev.filter((template) => template.id !== id));
         } catch (error) {
             throw error;
@@ -45,7 +45,7 @@ export default function Templates() {
     };
 
     if (isLoading) {
-        return <Loader />;
+        return <Loader/>;
     }
 
     return (

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
-import {activateTest, checkTestSubmissions, deleteTest} from "../../utils/api";
 import DeleteButton from "../DeleteButton/DeleteButton";
 import AddButton from "../add_button/AddButton";
 import EditButton from "../edit_button/edit";
 import toast, {Toaster} from "react-hot-toast";
 import DeleteModal from "../delete_modal/DeleteModal";
+import TestService from "../../api/tests/test.service";
 
 export default function TestList({tests: initialTests}) {
     const [localTests, setLocalTests] = useState(initialTests);
@@ -21,8 +21,7 @@ export default function TestList({tests: initialTests}) {
         const checkSubmissions = async () => {
             const checks = {};
             for (const test of initialTests) {
-                const hasSubmissions = await checkTestSubmissions(test.id);
-                checks[test.id] = hasSubmissions;
+                checks[test.id] = await TestService.checkTestSubmissions(test.id);
             }
             setSubmissionChecks(checks);
             setLocalTests(initialTests);
@@ -46,7 +45,7 @@ export default function TestList({tests: initialTests}) {
     const handleActivate = async (id) => {
         try {
             setLoadingId(id);
-            await activateTest(id);
+            await TestService.activateTest(id);
 
             setLocalTests(prevTests =>
                 prevTests.map(test =>
@@ -85,7 +84,7 @@ export default function TestList({tests: initialTests}) {
 
     const handleDelete = async (id) => {
         try {
-            await deleteTest(id);
+            await TestService.deleteTest(id);
             setLocalTests(prev => prev.filter(test => test.id !== id));
         } catch (error) {
             throw error;

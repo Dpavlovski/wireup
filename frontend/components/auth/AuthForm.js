@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {useAuth} from "../../utils/AuthProvider";
-import {login, register} from "../../utils/api";
 import logo from "../../styles/logo.png"
 import Image from "next/image";
 import Loader from "../loader/loader";
+import AuthService from "../../api/auth/auth.service";
 
 export default function AuthForm() {
     const [isRegister, setIsRegister] = useState(true);
@@ -29,7 +29,7 @@ export default function AuthForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
-        setIsLoading(true); // Start loading
+        setIsLoading(true);
 
         if (formData.username.length < 3 || formData.password.length < 3) {
             setError("Username and password must be at least 3 characters");
@@ -39,9 +39,9 @@ export default function AuthForm() {
 
         try {
             if (isRegister) {
-                await register(formData.username, formData.password);
+                await AuthService.register(formData.username, formData.password);
             }
-            const loggedInUser = await login(formData.username, formData.password);
+            const loggedInUser = await AuthService.login(formData.username, formData.password);
 
             setUser(loggedInUser);
 
@@ -65,7 +65,8 @@ export default function AuthForm() {
                     alt="App Logo"
                     className="h-14 w-auto"
                     width="120"
-                    height="56"
+                    height="auto"
+                    priority
                 />
             </div>
 

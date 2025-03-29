@@ -1,12 +1,16 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import BackButton from "../back_button/BackButton"; // Import your BackButton component
+import {useRouter} from "next/router";
+import {useState} from "react";
+import BackButton from "../back_button/BackButton";
+import toast, {Toaster} from "react-hot-toast";
+import TestService from "../../api/tests/test.service";
+import ExportButton from "../export_button/ExportButton";
 
-export function SubmittedTestList({ tests }) {
+export default function SubmittedTestList({tests}) {
     const router = useRouter();
-    const { id } = router.query;
+    const {id} = router.query;
     const [currentPage, setCurrentPage] = useState(1);
+    const [isExporting, setIsExporting] = useState(false);
     const itemsPerPage = 10;
 
     const handleBack = () => {
@@ -33,7 +37,7 @@ export function SubmittedTestList({ tests }) {
                     </svg>
                 </div>
                 <p className="text-gray-600 text-lg">No submissions available</p>
-                <BackButton onClick={handleBack} />
+                <BackButton onClick={handleBack}/>
             </div>
         );
     }
@@ -44,12 +48,37 @@ export function SubmittedTestList({ tests }) {
         currentPage * itemsPerPage
     );
 
+    const handleExport = async () => {
+        setIsExporting(true);
+        try {
+            const response = await TestService.exportTest(id);
+            const blob = new Blob([response.data], {type: "text/csv"});
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `submissions_${id}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            toast.success("Submission was successfully exported");
+        } catch (error) {
+            toast.error("Error exporting test submissions: ", error);
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-teal-800">Submitted Tests</h1>
-                <BackButton onClick={handleBack} />
+                <div className="flex gap-4">
+                    <ExportButton onClick={handleExport} isExporting={isExporting}/>
+                    <BackButton onClick={handleBack}/>
+                </div>
             </div>
+            <Toaster position={"bottom-right"}/>
 
             <div className="bg-white rounded-lg shadow-md overflow-hidden border border-teal-50">
                 <div className="p-6">
@@ -87,7 +116,8 @@ export function SubmittedTestList({ tests }) {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <Link href={`/admin/tests/${id}/submitted/${submission.test.id}`} passHref>
-                                            <button className="text-teal-600 hover:text-teal-800 mr-4 font-medium hover:underline">
+                                            <button
+                                                className="text-teal-600 hover:text-teal-800 mr-4 font-medium hover:underline">
                                                 View Details
                                             </button>
                                         </Link>
@@ -101,7 +131,8 @@ export function SubmittedTestList({ tests }) {
                     {totalPages > 1 && (
                         <div className="flex items-center justify-between mt-6">
                             <div className="text-sm text-teal-700">
-                                Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                                Showing <span
+                                className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
                                 <span className="font-medium">
                                     {Math.min(currentPage * itemsPerPage, tests.length)}
                                 </span>{' '}

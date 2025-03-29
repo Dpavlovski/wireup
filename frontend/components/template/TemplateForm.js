@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-import {addTemplate, checkExistingTests, editTemplate} from "../../utils/api";
 import toast from "react-hot-toast";
 import BackButton from "../back_button/BackButton";
+import TestService from "../../api/tests/test.service";
+import TemplateService from "../../api/templates/template.service";
 
 export default function TemplateForm({isPreview = false, initialData}) {
 
@@ -31,10 +32,9 @@ export default function TemplateForm({isPreview = false, initialData}) {
                 );
 
                 try {
-                    const exists = await checkExistingTests(initialData.test.id);
+                    const exists = await TestService.checkExistingTests(initialData.test.id);
                     setHasExistingTests(exists);
                 } catch (error) {
-                    console.error("Error checking existing tests:", error);
                     setHasExistingTests(true);
                 }
             }
@@ -132,11 +132,11 @@ export default function TemplateForm({isPreview = false, initialData}) {
 
         try {
             if (initialData) {
-                await editTemplate(initialData.test.id, templateData);
+                await TemplateService.editTemplate(initialData.test.id, templateData);
                 router.push("/admin/templates")
                 toast.success("Template updated successfully");
             } else {
-                await addTemplate(templateData);
+                await TemplateService.addTemplate(templateData);
                 toast.success("Template created successfully");
             }
             router.push("/admin/templates");

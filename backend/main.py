@@ -15,12 +15,12 @@ async def lifespan(app: FastAPI):
     mdb = await get_mongo_db()
     mdb.client.close()
 
+
 prefix = "/api"
 app = FastAPI(lifespan=lifespan)
 app.include_router(test.router, prefix=prefix + "/test", tags=["test"])
 app.include_router(template.router, prefix=prefix + "/template", tags=["template"])
 app.include_router(auth.router, prefix=prefix + "/auth", tags=["auth"])
-
 
 app.add_middleware(
     CORSMiddleware,

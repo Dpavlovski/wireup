@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import { getTest } from "../utils/api";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
+import TestService from "../api/tests/test.service";
 
 export const useTemplateData = () => {
     const router = useRouter();
-    const { id } = router.query;
+    const {id} = router.query;
     const [test, setTest] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -14,11 +14,10 @@ export const useTemplateData = () => {
 
         const fetchData = async () => {
             try {
-                const data = await getTest(id);
+                const data = await TestService.getTest(id);
                 setTest(data);
                 setLoading(false);
             } catch (err) {
-                console.error("Error fetching tests:", err);
                 setError("Test not found");
                 setLoading(false);
             }
@@ -27,5 +26,5 @@ export const useTemplateData = () => {
         fetchData();
     }, [id]);
 
-    return { loading, error, test };
+    return {loading, error, test};
 };

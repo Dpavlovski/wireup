@@ -1,13 +1,13 @@
 import {useEffect, useState} from "react";
-import {getTests} from "../../../utils/api";
 import ProtectedRoute from "../../../utils/ProtectedRoute";
 import TestList from "../../../components/test/TestList";
+import TestService from "../../../api/tests/test.service";
 
 export default function AdminHome() {
     const [tests, setTests] = useState([]);
 
     useEffect(() => {
-        getTests().then((tests) => setTests(tests));
+        TestService.getTests().then((tests) => setTests(tests));
     }, []);
 
     return (

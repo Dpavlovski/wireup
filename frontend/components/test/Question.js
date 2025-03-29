@@ -1,6 +1,6 @@
-import {Option} from "./Option";
+import Option from "./Option";
 
-export function Question({ question, options, onSelect, answer }) {
+export default function Question({question, options, onSelect, answer}) {
     return (
         <div className="question-container">
             <h3 className="question-text">{question.question}</h3>

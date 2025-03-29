@@ -1,3 +1,5 @@
+import csv
+import io
 from collections import defaultdict
 from datetime import datetime
 from typing import Annotated, List, Dict
@@ -6,6 +8,7 @@ from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.openapi.models import Response
 from pydantic import BaseModel
+from starlette.responses import StreamingResponse
 
 from backend.src.database.collections import (
     Test, QuestionOption, Question, Option, SubmittedTest, Answer, User
@@ -88,6 +91,7 @@ async def get_active_tests(db: db_dep):
         return await db.get_entries(Test, {"is_active": True})
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching active tests: {str(e)}")
+
 
 @router.get("/{id}/submitted")
 async def get_submitted_tests(db: db_dep, id: str):
@@ -287,7 +291,8 @@ async def get_submitted_test(db: db_dep, id: str):
             for qo in question_options if qo.question_id in question_dict and qo.option_id in options
         ]
 
-        return SubmittedTestReview(test=test, user=user, question_answer=question_answer, date_submitted= submitted_test.date_submitted)
+        return SubmittedTestReview(test=test, user=user, question_answer=question_answer,
+                                   date_submitted=submitted_test.date_submitted)
     except Exception as e:
         raise HTTPException(status_code=400, detail=e)
 
@@ -354,3 +359,47 @@ async def delete_test(db: db_dep, test_id: str):
     test = await db.get_entry(ObjectId(test_id), Test)
     await db.delete_entity(test)
     return Response(description="Test deleted")
+
+
+@router.post("/export/{test_id}")
+async def export(db: db_dep, test_id: str):
+    try:
+        test = await db.get_entry(ObjectId(test_id), Test)
+        if not test:
+            raise HTTPException(status_code=404, detail="Test not found")
+
+        submitted_tests = await db.get_entries(SubmittedTest, {"test_id": test_id})
+        if not submitted_tests:
+            raise HTTPException(status_code=404, detail="No submissions found for this test")
+
+        csv_data = io.StringIO()
+        writer = csv.writer(csv_data)
+        questions = await db.get_entries(Question, {"test_id": test.template_id})
+        headers = ["Username"] + [q.question for q in questions]
+        writer.writerow(headers)
+
+        for st in submitted_tests:
+            result = await get_submitted_test(db, st.id)
+            user = result.user
+
+            row = [
+                user.username if user else "Unknown",
+            ]
+
+            for answer in result.question_answer:
+                row.append(answer.answer.value if answer.answer.value else "Unknown")
+
+            writer.writerow(row)
+
+        csv_data.seek(0)
+
+        return StreamingResponse(
+            iter([csv_data.getvalue()]),
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename=submissions_{test.sector}_{test.title}.csv"}
+        )
+
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error exporting submissions: {str(e)}")

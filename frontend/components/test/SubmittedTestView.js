@@ -1,7 +1,7 @@
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import BackButton from "../back_button/BackButton";
 
-export default function SubmittedTestView({ submission }) {
+export default function SubmittedTestView({submission}) {
     const router = useRouter();
 
     if (!submission) {
@@ -25,7 +25,7 @@ export default function SubmittedTestView({ submission }) {
                     </div>
                     <h2 className="text-xl font-semibold text-gray-800 mb-2">No Submission Found</h2>
                     <p className="text-gray-600 mb-6">The requested submission data could not be loaded.</p>
-                    <BackButton onClick={() => router.back()} />
+                    <BackButton onClick={() => router.back()}/>
                 </div>
             </div>
         );
@@ -35,7 +35,7 @@ export default function SubmittedTestView({ submission }) {
         <div className="max-w-4xl mx-auto px-4 py-8">
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl font-bold text-teal-800">Submission Details</h1>
-                <BackButton onClick={() => router.back()} />
+                <BackButton onClick={() => router.back()}/>
             </div>
 
             <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-teal-50">
@@ -82,7 +82,8 @@ export default function SubmittedTestView({ submission }) {
                     {submission.question_answer?.map((qa, index) => (
                         <div key={qa.question.id} className="p-6">
                             <div className="flex items-start">
-                                <span className="bg-teal-100 text-teal-800 font-medium rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1">
+                                <span
+                                    className="bg-teal-100 text-teal-800 font-medium rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1">
                                     {index + 1}
                                 </span>
                                 <div className="flex-1">

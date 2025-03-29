@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Annotated
 
-from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.logger import logger
 from fastapi.openapi.models import Response
@@ -113,6 +112,7 @@ async def delete_template(db: db_dep, id: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error"
         )
+
 
 @router.get("/check_existing_tests/{id}")
 async def check_existing_tests(db: db_dep, id: str):

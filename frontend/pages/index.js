@@ -3,9 +3,10 @@ import {useEffect, useState} from "react";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import {ChartBarIcon, ClipboardDocumentCheckIcon} from "@heroicons/react/24/outline";
 import {LockClosedIcon, XCircleIcon} from "@heroicons/react/16/solid";
-import {getActiveTests, getSubmittedTemplatesByUser} from "../utils/api";
 import {useRouter} from "next/router";
 import StartButton from "../components/start_button/StartButton";
+import TestService from "../api/tests/test.service";
+import TemplateService from "../api/templates/template.service";
 
 export default function HomePage() {
     const {user} = useAuth();
@@ -21,14 +22,12 @@ export default function HomePage() {
         async function fetchData() {
             try {
                 const [tests, completed] = await Promise.all([
-                    getActiveTests(),
-                    getSubmittedTemplatesByUser(user.id)
+                    TestService.getActiveTests(),
+                    TemplateService.getSubmittedTemplatesByUser(user.id)
                 ]);
                 setActiveTests(tests);
                 setCompletedTests(completed);
-                console.log(completed);
             } catch (error) {
-                console.error("Error fetching data:", error);
                 setActiveTests([]);
                 setCompletedTests([]);
             }

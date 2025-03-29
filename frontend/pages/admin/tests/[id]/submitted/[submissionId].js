@@ -1,9 +1,9 @@
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {getSubmittedTest} from "../../../../../utils/api";
 import SubmittedTestView from "../../../../../components/test/SubmittedTestView";
 import ProtectedRoute from "../../../../../utils/ProtectedRoute";
 import Loader from "../../../../../components/loader/loader";
+import TestService from "../../../../../api/tests/test.service";
 
 export default function SubmittedTest() {
     const router = useRouter();
@@ -16,7 +16,7 @@ export default function SubmittedTest() {
         if (!submissionId) return;
 
         setLoading(true);
-        getSubmittedTest(submissionId)
+        TestService.getSubmittedTest(submissionId)
             .then((data) => {
                 if (data.error) {
                     setError(data.error);
@@ -24,10 +24,8 @@ export default function SubmittedTest() {
                     setSubmission(data);
                 }
                 setLoading(false);
-                console.log(data);
             })
             .catch((err) => {
-                console.error("Error fetching submission:", err);
                 setError("Failed to load submission");
                 setLoading(false);
             });

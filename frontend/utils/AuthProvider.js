@@ -1,5 +1,5 @@
 import {createContext, useContext, useEffect, useState} from "react";
-import {fetchUser, logout} from "./api";
+import AuthService from "../api/auth/auth.service";
 
 const AuthContext = createContext();
 
@@ -8,14 +8,14 @@ export const AuthProvider = ({children}) => {
 
     useEffect(() => {
         const loadUser = async () => {
-            const userData = await fetchUser();
+            const userData = await AuthService.fetchUser();
             setUser(userData);
         };
         loadUser().then();
     }, []);
 
     const handleLogout = async () => {
-        await logout();
+        await AuthService.logout();
         setUser(null);
     };
 

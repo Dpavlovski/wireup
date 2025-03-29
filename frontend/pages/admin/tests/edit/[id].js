@@ -1,8 +1,8 @@
 import {useRouter} from "next/router";
-import {getEditTest} from "../../../../utils/api";
 import {useEffect, useState} from "react";
 import ProtectedRoute from "../../../../utils/ProtectedRoute";
 import TestForm from "../../../../components/test/TestForm";
+import TestService from "../../../../api/tests/test.service";
 
 export default function EditTest() {
     const router = useRouter();
@@ -11,9 +11,9 @@ export default function EditTest() {
 
     useEffect(() => {
         if (id) {
-            getEditTest(id)
+            TestService.getEditTest(id)
                 .then(setTestData)
-                .catch(console.error);
+                .catch();
         }
     }, [id]);
 

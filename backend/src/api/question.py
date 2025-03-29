@@ -3,7 +3,7 @@ from typing import Annotated
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
 
-from backend.src.database.collections import Question, Option, QuestionOption, SubmittedTest
+from backend.src.database.collections import Question, Option, QuestionOption
 from backend.src.database.mongo import MongoDBDatabase
 from backend.src.database.singletons import get_mongo_db
 

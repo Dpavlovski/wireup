@@ -1,9 +1,10 @@
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import {getTest} from "../../../utils/api";
-import {TestView} from "../../../components/test/TestView";
+
 import ProtectedRoute from "../../../utils/ProtectedRoute";
 import {useAuth} from "../../../utils/AuthProvider";
+import TestService from "../../../api/tests/test.service";
+import TestView from "../../../components/test/TestView";
 
 export default function TakeTest() {
     const router = useRouter();
@@ -17,7 +18,7 @@ export default function TakeTest() {
         if (!id) return;
 
         setLoading(true);
-        getTest(id)
+        TestService.getTest(id)
             .then((data) => {
                 const formattedTest = {
                     ...data.test,
@@ -31,7 +32,6 @@ export default function TakeTest() {
                 setLoading(false);
             })
             .catch((err) => {
-                console.error("Error fetching tests:", err);
                 setError("Test not found");
                 setLoading(false);
             });

@@ -1,4 +1,4 @@
-export function Option({questionId, option, onSelect, answer}) {
+export default function Option({questionId, option, onSelect, answer}) {
     const isSelected = answer === option.id;
 
     return (
