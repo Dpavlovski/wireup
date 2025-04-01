@@ -1,21 +1,3 @@
-import {useState} from 'react';
-import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Legend,
-    Pie,
-    PieChart,
-    PolarAngleAxis,
-    PolarGrid,
-    PolarRadiusAxis,
-    Radar,
-    RadarChart,
-    Tooltip,
-    XAxis,
-    YAxis
-} from 'recharts';
 import ProtectedRoute from "../../../utils/ProtectedRoute";
 
 export default function Index() {

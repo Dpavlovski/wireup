@@ -1,4 +1,4 @@
-function Error({ statusCode }) {
+function Error({statusCode}) {
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
             <div className="text-center">
@@ -21,9 +21,9 @@ function Error({ statusCode }) {
     )
 }
 
-Error.getInitialProps = ({ res, err }) => {
+Error.getInitialProps = ({res, err}) => {
     const statusCode = res ? res.statusCode : err ? err.statusCode : 404
-    return { statusCode }
+    return {statusCode}
 }
 
 export default Error

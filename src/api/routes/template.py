@@ -7,11 +7,11 @@ from fastapi.openapi.models import Response
 from pymongo.errors import PyMongoError
 from starlette import status
 
-from backend.src.api.question import delete_questions
-from backend.src.api.test import TemplateDto, get_test, QuestionOptionDto
-from backend.src.database.collections import Test, Question, Option, QuestionOption
-from backend.src.database.mongo import MongoDBDatabase
-from backend.src.database.singletons import get_mongo_db
+from src.api.routes.question import delete_questions
+from src.api.routes.test import TemplateDto, get_test, QuestionOptionDto
+from src.database.collections import Test, Question, Option, QuestionOption
+from src.database.mongo import MongoDBDatabase
+from src.database.singletons import get_mongo_db
 
 router = APIRouter()
 db_dep = Annotated[MongoDBDatabase, Depends(get_mongo_db)]

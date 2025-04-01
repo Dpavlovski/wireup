@@ -10,11 +10,11 @@ from fastapi.openapi.models import Response
 from pydantic import BaseModel
 from starlette.responses import StreamingResponse
 
-from backend.src.database.collections import (
+from src.database.collections import (
     Test, QuestionOption, Question, Option, SubmittedTest, Answer, User
 )
-from backend.src.database.mongo import MongoDBDatabase
-from backend.src.database.singletons import get_mongo_db
+from src.database.mongo import MongoDBDatabase
+from src.database.singletons import get_mongo_db
 
 router = APIRouter()
 db_dep = Annotated[MongoDBDatabase, Depends(get_mongo_db)]

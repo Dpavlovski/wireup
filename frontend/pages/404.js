@@ -13,7 +13,7 @@ export default function Custom404() {
                     The page you're looking for doesn't exist or has been moved.
                 </p>
                 <button
-                    onClick={() => auth.user.role === "admin"? router.push("/admin/tests") : router.push("/")}
+                    onClick={() => auth.user.role === "admin" ? router.push("/admin/tests") : router.push("/")}
                     className="inline-block px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
                     Return Home

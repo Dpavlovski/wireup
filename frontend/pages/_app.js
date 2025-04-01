@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../styles/global.css'
+import '../styles/global.css';
 
 import {AuthProvider} from "../utils/AuthProvider";
 import Header from "../components/header/Header";

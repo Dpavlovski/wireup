@@ -9,9 +9,9 @@ from jwt.exceptions import PyJWTError
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
-from backend.src.database.collections import User, Role
-from backend.src.database.mongo import MongoDBDatabase
-from backend.src.database.singletons import get_mongo_db
+from src.database.collections import User, Role
+from src.database.mongo import MongoDBDatabase
+from src.database.singletons import get_mongo_db
 
 load_dotenv()
 secret = os.getenv("JWT_SECRET")

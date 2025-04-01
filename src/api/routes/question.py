@@ -3,9 +3,9 @@ from typing import Annotated
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
 
-from backend.src.database.collections import Question, Option, QuestionOption
-from backend.src.database.mongo import MongoDBDatabase
-from backend.src.database.singletons import get_mongo_db
+from src.database.collections import Question, Option, QuestionOption
+from src.database.mongo import MongoDBDatabase
+from src.database.singletons import get_mongo_db
 
 router = APIRouter()
 db_dep = Annotated[MongoDBDatabase, Depends(get_mongo_db)]

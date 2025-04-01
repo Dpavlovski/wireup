@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.src.api import template, test, auth
+from src.api.routes import test, template, auth
 from src.database.singletons import get_mongo_db
 
 
@@ -31,4 +31,4 @@ app.add_middleware(
 )
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=5000, reload=False)
