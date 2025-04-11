@@ -21,11 +21,12 @@ T = TypeVar('T', bound=MongoEntry)
 class MongoDBDatabase:
     client: AsyncIOMotorClient
 
-    def __init__(self, database_name: str = "wireup", url: Optional[str] = None):
+    def __init__(self, database_name: str = "wireup", url: Optional[str] = None, port: Optional[int] = None):
         load_dotenv()
         url = os.getenv("MONGO_URL") if url is None else url
-        print(url)
-        self.client = AsyncIOMotorClient(f"mongodb://root:example@{url}:27018/")
+        port = os.getenv("MONGO_PORT") if port is None else port
+
+        self.client = AsyncIOMotorClient(f"mongodb://root:example@{url}:{port}/")
         self.db = self.client[database_name]
 
     async def ping(self) -> bool:

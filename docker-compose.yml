@@ -1,5 +1,10 @@
 version: '3.8'
 
+networks:
+  app_network:
+    driver: bridge
+    name: wireup_network
+
 services:
   mongodb:
     image: mongo:latest
@@ -11,6 +16,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - app_network
 
   mongo-express:
     image: mongo-express:latest
@@ -21,21 +28,33 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_SERVER: mongodb
+    networks:
+      - app_network
+
 
   backend:
     image: dimitarpavlovski/wireup-backend
+    container_name: backend
     depends_on:
       - mongodb
     ports:
       - "5000:5000"
+    networks:
+      - app_network
+
 
   frontend:
     image: dimitarpavlovski/wireup
+    container_name: frontend
     depends_on:
       - mongodb
       - backend
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://backend:5000/api
     ports:
       - "3000:3000"
+    networks:
+      - app_network
 
 volumes:
   mongo_data:

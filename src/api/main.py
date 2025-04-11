@@ -22,9 +22,16 @@ app.include_router(test.router, prefix=prefix + "/test", tags=["test"])
 app.include_router(template.router, prefix=prefix + "/template", tags=["template"])
 app.include_router(auth.router, prefix=prefix + "/auth", tags=["auth"])
 
+origins = [
+    "http://localhost:3000",
+    "http://frontend:3000",
+    "http://dimiserver.duckdns.org",
+    "http://tianaserver.duckdns.org",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
