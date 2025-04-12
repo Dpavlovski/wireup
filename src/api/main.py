@@ -24,9 +24,12 @@ app.include_router(auth.router, prefix=prefix + "/auth", tags=["auth"])
 
 origins = [
     "http://localhost:3000",
+    "http://localhost:8100",
     "http://frontend:3000",
     "http://dimiserver.duckdns.org",
     "http://tianaserver.duckdns.org",
+    "http://test.thewireup.com",
+    "https://8ab1-77-29-44-90.ngrok-free.app"
 ]
 
 app.add_middleware(

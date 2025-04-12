@@ -76,10 +76,11 @@ async def login(db: db_dep, user_data: UserLogin, response: Response):
         key="access_token",
         value=f"Bearer {jwt_token}",
         httponly=True,
-        # secure=True,  # Uncomment for production (requires HTTPS)
-        samesite="lax",
+        secure=True,
+        samesite="none",
         max_age=60 * 60 * 24,
     )
+
     user = await db.get_entry_from_col_values(
         columns={"username": user_data.username},
         class_type=User

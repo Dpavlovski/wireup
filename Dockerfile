@@ -1,4 +1,4 @@
-FROM python:3.13-slim AS builder
+FROM python:3.12-slim AS builder
 
 RUN pip install poetry==2.1.2
 
@@ -12,7 +12,7 @@ RUN touch README.md
 
 RUN poetry install --only main --no-root
 
-FROM python:3.13-slim AS runtime
+FROM python:3.12-slim AS runtime
 
 ENV VIRTUAL_ENV=/.venv \
     PATH="/.venv/bin:$PATH"
