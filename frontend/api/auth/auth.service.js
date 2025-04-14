@@ -9,11 +9,12 @@ const AuthService = {
 
     login: async (username, password) => {
         const response = await api.post(`/auth/login`, {username, password}, {withCredentials: true});
+        localStorage.setItem('auth_token', response.data.access_token);
         return response.data;
     },
 
     logout: async () => {
-        await api.post(`/auth/logout`, {}, {withCredentials: true});
+        localStorage.removeItem('auth_token');
     },
 
     fetchUser: async () => {

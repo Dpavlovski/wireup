@@ -49,7 +49,7 @@ export default function AuthForm() {
             if (err.response) {
                 setError(err.response.data.detail || "An error occurred");
             } else {
-                setError("Network error. Please try again.");
+                setError(err.message);
             }
         } finally {
             setIsLoading(false);

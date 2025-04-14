@@ -12,7 +12,7 @@ const TestService = {
 
     getTests: async () => {
         try {
-            const response = await api.get("/test?is_template=False");
+            const response = await api.get("/test/?is_template=False");
             return response.data;
         } catch (error) {
             throw error;

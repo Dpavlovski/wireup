@@ -5,6 +5,7 @@ from typing import Annotated
 import jwt
 from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Depends, Request, Response
+from fastapi.security import OAuth2PasswordBearer
 from jwt.exceptions import PyJWTError
 from passlib.context import CryptContext
 from pydantic import BaseModel
@@ -57,7 +58,7 @@ class UserLogin(BaseModel):
 
 
 @router.post("/login")
-async def login(db: db_dep, user_data: UserLogin, response: Response):
+async def login(db: db_dep, user_data: UserLogin):
     user = await db.get_entry_from_col_values(
         columns={"username": user_data.username},
         class_type=User
@@ -72,42 +73,27 @@ async def login(db: db_dep, user_data: UserLogin, response: Response):
         algorithm=algorithm,
     )
 
-    response.set_cookie(
-        key="access_token",
-        value=f"Bearer {jwt_token}",
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=60 * 60 * 24,
-    )
-
-    user = await db.get_entry_from_col_values(
-        columns={"username": user_data.username},
-        class_type=User
-    )
-
-    return {"access_token": jwt_token, "token_type": "bearer", "id": user.id, "username": user.username,
-            "role": user.role}
+    return {
+        "access_token": jwt_token,
+        "token_type": "bearer",
+        "id": user.id,
+        "username": user.username,
+        "role": user.role
+    }
 
 
 @router.post("/logout")
-async def logout(response: Response):
-    response.delete_cookie(
-        "access_token",
-        httponly=True,
-        secure=True,
-        samesite="strict"
-    )
+async def logout():
     return {"message": "Logged out successfully"}
 
 
-async def get_current_user(db: db_dep, request: Request) -> User:
-    token = request.cookies.get("access_token")
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
+async def get_current_user(
+    db: db_dep,
+    token: Annotated[str, Depends(oauth2_scheme)]
+) -> User:
     try:
-        token = token.replace("Bearer ", "").strip()
         payload = jwt.decode(token, secret, algorithms=[algorithm])
         username = payload.get("sub")
         if not username:
@@ -123,6 +109,7 @@ async def get_current_user(db: db_dep, request: Request) -> User:
         raise HTTPException(status_code=404, detail="User not found")
 
     return user
+
 
 
 @router.get("/me")

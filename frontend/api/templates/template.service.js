@@ -3,7 +3,7 @@ import {api} from "../api";
 const TemplateService = {
     getTemplates: async () => {
         try {
-            const response = await api.get("/test?is_template=True");
+            const response = await api.get("/test/?is_template=True");
             return response.data;
         } catch (error) {
             throw error;
