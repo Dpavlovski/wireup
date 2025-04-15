@@ -4,6 +4,8 @@ import '../styles/global.css';
 import {AuthProvider} from "../utils/AuthProvider";
 import Header from "../components/header/Header";
 import {useRouter} from "next/router";
+import Head from 'next/head'
+
 
 function MyApp({Component, pageProps}) {
     const router = useRouter();
@@ -12,6 +14,9 @@ function MyApp({Component, pageProps}) {
 
     return (
         <AuthProvider>
+            <Head>
+                <title>test.thewireup.com</title>
+            </Head>
             {showHeader && <Header/>}
             <Component {...pageProps} />
         </AuthProvider>

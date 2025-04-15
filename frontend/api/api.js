@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 export const api = axios.create({
-    baseURL:'https://dimiserver.duckdns.org:8101/api',
+    baseURL: 'https://dimiserver.duckdns.org:8101/api',
     headers: {
         'Content-Type': 'application/json',
     },
