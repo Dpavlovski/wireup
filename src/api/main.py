@@ -23,15 +23,15 @@ app.include_router(template.router, prefix=prefix + "/template", tags=["template
 app.include_router(auth.router, prefix=prefix + "/auth", tags=["auth"])
 
 origins = [
-    "http://localhost:3000",          # Local dev frontend
-    "http://localhost:8100",         # Alternative local port
-    "http://frontend:3000",          # Docker-compose service name
-    "http://localhost:5000",         # Local alternative
-    "http://dimiserver.duckdns.org", # Your production domain
-    "http://dimiserver.duckdns.org:3000",  # Your production domain
-    "http://tianaserver.duckdns.org",
+    "http://localhost:3000",
+    "http://localhost:8100",
+    "http://frontend:3000",
+    "http://dimiserver.duckdns.org",
+    "https://dimiserver.duckdns.org",
+    "http://dimiserver.duckdns.org:3000",
     "https://tianaserver.duckdns.org",
     "http://test.thewireup.com",
+    "https://test.thewireup.com",
 ]
 
 app.add_middleware(

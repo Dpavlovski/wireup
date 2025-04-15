@@ -26,7 +26,7 @@ services:
 
 
   backend:
-    image: dimitarpavlovski/wireup-backend:dimi
+    image: dimitarpavlovski/wireup-backend
     container_name: backend
     depends_on:
       - mongodb
@@ -37,13 +37,11 @@ services:
 
 
   frontend:
-    image: dimitarpavlovski/wireup:dimi
+    image: dimitarpavlovski/wireup
     container_name: frontend
     depends_on:
       - mongodb
       - backend
-    environment:
-      - NEXT_PUBLIC_API_BASE_URL=http://backend:5000/api
     ports:
       - "3000:3000"
     networks:
