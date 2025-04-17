@@ -1,6 +1,6 @@
-export default function EditButton() {
+export default function EditButton({handleEdit}) {
     return (
-        <button className="edit-button">
+        <button className="edit-button" onClick={handleEdit}>
             <svg className="edit-svg-icon" fill="none" height="24" viewBox="0 0 24 24" width="24"
                  xmlns="http://www.w3.org/2000/svg">
                 <g stroke="teal" strokeLinecap="round" strokeWidth="2">

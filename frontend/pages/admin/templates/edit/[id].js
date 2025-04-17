@@ -3,7 +3,7 @@ import TemplateForm from "../../../../components/template/TemplateForm";
 import {useTemplateData} from "../../../../hooks/useTemplateData";
 import Loader from "../../../../components/loader/loader";
 
-const PreviewTemplate = () => {
+const EditTemplate = () => {
     const {loading, error, test} = useTemplateData();
 
     return (
@@ -11,10 +11,10 @@ const PreviewTemplate = () => {
             {loading && <Loader/>}
 
             {!loading && !error && test && (
-                <TemplateForm isPreview={true} initialData={test}/>
+                <TemplateForm initialData={test}/>
             )}
         </ProtectedRoute>
     );
 };
 
-export default PreviewTemplate;
+export default EditTemplate;

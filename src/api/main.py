@@ -24,6 +24,7 @@ app.include_router(auth.router, prefix=prefix + "/auth", tags=["auth"])
 
 origins = [
     "http://localhost:3000",
+    "http://localhost:3100",
     "http://localhost:8100",
     "http://frontend:3000",
     "http://dimiserver.duckdns.org",

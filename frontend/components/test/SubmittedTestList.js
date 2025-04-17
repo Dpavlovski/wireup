@@ -6,7 +6,7 @@ import toast, {Toaster} from "react-hot-toast";
 import TestService from "../../api/tests/test.service";
 import ExportButton from "../export_button/ExportButton";
 
-export default function SubmittedTestList({tests}) {
+export default function SubmittedTestList({tests, test}) {
     const router = useRouter();
     const {id} = router.query;
     const [currentPage, setCurrentPage] = useState(1);
@@ -52,18 +52,25 @@ export default function SubmittedTestList({tests}) {
         setIsExporting(true);
         try {
             const response = await TestService.exportTest(id);
-            const blob = new Blob([response.data], {type: "text/csv"});
+
+            let filename = `submissions_${test.sector}_${test.title}.csv`;  // Fallback
+
+            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), response.data], {
+                type: "text/csv;charset=utf-8"
+            });
+
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = `submissions_${id}.csv`;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
+
             toast.success("Submission was successfully exported");
         } catch (error) {
-            toast.error("Error exporting test submissions: ", error);
+            toast.error(`Error exporting test submissions: ${error.message}`);
         } finally {
             setIsExporting(false);
         }

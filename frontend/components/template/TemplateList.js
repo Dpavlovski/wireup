@@ -5,6 +5,9 @@ import DeleteButton from "../DeleteButton/DeleteButton";
 import CopyButton from "../copy_button/CopyButton";
 import AddButton from "../add_button/AddButton";
 import DeleteModal from "../delete_modal/DeleteModal";
+import EditButton from "../edit_button/edit";
+import TestService from "../../api/tests/test.service";
+import router from "next/router";
 
 export default function TemplatesList({templates, handleCopy, handleDelete}) {
     const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -32,6 +35,14 @@ export default function TemplatesList({templates, handleCopy, handleDelete}) {
             closeDeleteModal();
         }
     };
+
+    const confirmEdit = async (id) => {
+        if (await TestService.checkExistingTests(id)) {
+            toast.error("Cannot edit template due to existing tests.");
+        } else {
+            await router.push(`/admin/templates/edit/${id}`);
+        }
+    }
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -82,6 +93,7 @@ export default function TemplatesList({templates, handleCopy, handleDelete}) {
 
                                     <div className="flex gap-2">
                                         <CopyButton handleCopy={() => handleCopy(template.id)}/>
+                                        <EditButton handleEdit={() => confirmEdit(template.id)}/>
                                         <DeleteButton handleDelete={() => openDeleteModal(template)}/>
                                     </div>
                                 </div>

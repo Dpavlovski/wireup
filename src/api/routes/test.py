@@ -372,8 +372,8 @@ async def export(db: db_dep, test_id: str):
         if not submitted_tests:
             raise HTTPException(status_code=404, detail="No submissions found for this test")
 
-        csv_data = io.StringIO()
-        writer = csv.writer(csv_data)
+        output = io.StringIO()
+        writer = csv.writer(output)
         questions = await db.get_entries(Question, {"test_id": test.template_id})
         headers = ["Username"] + [q.question for q in questions]
         writer.writerow(headers)
@@ -391,12 +391,14 @@ async def export(db: db_dep, test_id: str):
 
             writer.writerow(row)
 
-        csv_data.seek(0)
+        csv_bytes = output.getvalue().encode('utf-8-sig')
 
         return StreamingResponse(
-            iter([csv_data.getvalue()]),
-            media_type="text/csv",
-            headers={"Content-Disposition": f"attachment; filename=submissions_{test.sector}_{test.title}.csv"}
+            iter([csv_bytes]),
+            media_type="text/csv; charset=utf-8",
+            headers={
+                "Content-Disposition": "attachment; filename=test_export.csv"
+            }
         )
 
     except HTTPException as he:
